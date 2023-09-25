@@ -16,4 +16,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0-rc.1.23461.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BulkyWeb.DataAccess\BulkyWeb.DataAccess.csproj" />
+  </ItemGroup>
+
 </Project>
