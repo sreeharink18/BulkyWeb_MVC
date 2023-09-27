@@ -2,6 +2,7 @@
 using BulkyWeb.DataAccess.Repository.IRepository;
 using BulkyWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace BulkyWeb.Areas.Admin.Controllers
@@ -21,21 +22,24 @@ namespace BulkyWeb.Areas.Admin.Controllers
         }
         public IActionResult Create()
         {
-
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll()
+                .Select(u => new SelectListItem { 
+                    Text = u.Name,
+                    Value = u.Id.ToString(),
+                });
+           /* ViewBag.CategoryList = CategoryList;*/
+            ViewData["CategoryList"] = CategoryList;
             return View();
         }
         [HttpPost]
         public IActionResult Create(Product obj)
         {
-            if (obj.Name == obj.DisplayOrder.ToString())
-            {
-                ModelState.AddModelError("name", "The display order cannot exactly same");
-            }
+         
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Add(obj);
+                _unitOfWork.Product.Add(obj);
                 _unitOfWork.Save();
-                TempData["success"] = "Category Created Successfully";
+                TempData["success"] = "Product Created Successfully";
                 return RedirectToAction("Index");
             }
 
@@ -47,24 +51,24 @@ namespace BulkyWeb.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            Category? CategoryFromDb1 = _unitOfWork.Category.Get(u => u.Id == id);
-            /*Category? CategoryFromDb = _db.Categories.Find(id);*//*
-            Category? CategoryFromDb2 = _db.Categories.Where(u=>u.Id==id).FirstOrDefault();*/
-            if (CategoryFromDb1 == null)
+            Product? ProductFromDb1 = _unitOfWork.Product.Get(u => u.Id == id);
+            /*Product? ProductFromDb = _db.Categories.Find(id);*//*
+            Product? ProductFromDb2 = _db.Categories.Where(u=>u.Id==id).FirstOrDefault();*/
+            if (ProductFromDb1 == null)
             {
                 return NotFound();
             }
-            return View(CategoryFromDb1);
+            return View(ProductFromDb1);
         }
         [HttpPost]
-        public IActionResult Edit(Category obj)
+        public IActionResult Edit(Product obj)
         {
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Update(obj);
+                _unitOfWork.Product.Update(obj);
                 _unitOfWork.Save();
-                TempData["success"] = "Category Edit Successfully";
+                TempData["success"] = "Product Edit Successfully";
                 return RedirectToAction("Index");
             }
             return View();
@@ -75,27 +79,27 @@ namespace BulkyWeb.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            Category? CategoryFromDb1 = _unitOfWork.Category.Get(u => u.Id == id);
-            /*Category? CategoryFromDb = _db.Categories.Find(id);*//*
-            Category? CategoryFromDb2 = _db.Categories.Where(u=>u.Id==id).FirstOrDefault();*/
-            if (CategoryFromDb1 == null)
+            Product? ProductFromDb1 = _unitOfWork.Product.Get(u => u.Id == id);
+            /*Product? ProductFromDb = _db.Categories.Find(id);*//*
+            Product? ProductFromDb2 = _db.Categories.Where(u=>u.Id==id).FirstOrDefault();*/
+            if (ProductFromDb1 == null)
             {
                 return NotFound();
             }
-            return View(CategoryFromDb1);
+            return View(ProductFromDb1);
         }
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePost(int? id)
         {
-            Category? obj = _unitOfWork.Category.Get(u => u.Id == id);
+            Product? obj = _unitOfWork.Product.Get(u => u.Id == id);
 
             if (obj == null)
             {
                 return NotFound();
             }
-            _unitOfWork.Category.Remove(obj);
+            _unitOfWork.Product.Remove(obj);
             _unitOfWork.Save();
-            TempData["success"] = "Category delete Successfully";
+            TempData["success"] = "Product delete Successfully";
             return RedirectToAction("Index");
 
         }
