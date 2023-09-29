@@ -1,6 +1,7 @@
 ﻿using BulkyWeb.DataAccess.Data;
 using BulkyWeb.DataAccess.Repository.IRepository;
 using BulkyWeb.Models;
+using BulkyWeb.Models.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -20,30 +21,60 @@ namespace BulkyWeb.Areas.Admin.Controllers
             List<Product> Product = _unitOfWork.Product.GetAll().ToList();
             return View(Product);
         }
-        public IActionResult Create()
+        public IActionResult Upsert(int? id)
         {
-            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll()
+            /*IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll()
                 .Select(u => new SelectListItem { 
                     Text = u.Name,
                     Value = u.Id.ToString(),
-                });
-           /* ViewBag.CategoryList = CategoryList;*/
-            ViewData["CategoryList"] = CategoryList;
-            return View();
+                });*/
+            /*  ViewBag.CategoryList = CategoryList;
+              ViewData["CategoryList"] = CategoryList;*/
+            ProductVM productVM = new()
+            {
+                CategoryList = _unitOfWork.Category.GetAll()
+                .Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString(),
+                }),
+            Product =new Product()
+            };
+            if (id == null || id == 0)
+            {
+                //Create
+                return View(productVM);
+            }
+            else
+            {
+                //Update
+                productVM.Product = _unitOfWork.Product.Get(u=>u.Id  == id);
+                return View(productVM);
+            }
         }
         [HttpPost]
-        public IActionResult Create(Product obj)
+        public IActionResult Upsert(ProductVM productVm ,IFormFile? form)
         {
          
             if (ModelState.IsValid)
             {
-                _unitOfWork.Product.Add(obj);
+                _unitOfWork.Product.Add(productVm.Product);
                 _unitOfWork.Save();
                 TempData["success"] = "Product Created Successfully";
                 return RedirectToAction("Index");
             }
+            else
+            {
+                productVm.CategoryList = _unitOfWork.Category.GetAll()
+               .Select(u => new SelectListItem
+               {
+                   Text = u.Name,
+                   Value = u.Id.ToString(),
+               });
+               return View(productVm);
+            }
 
-            return View();
+            
         }
         public IActionResult Edit(int? id)
         {

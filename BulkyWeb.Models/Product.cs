@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace BulkyWeb.Models
 {
@@ -39,12 +40,13 @@ namespace BulkyWeb.Models
         [Range(1, 1000)]
         public double Price100 { get; set; }
 
-        [Required]
+
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
+        [ValidateNever]
         public Category category { get; set; }
         public bool DisplayList { get; set; }
-        
+        [ValidateNever]
         public string ImageUrl { get; set; }
     }
 }
