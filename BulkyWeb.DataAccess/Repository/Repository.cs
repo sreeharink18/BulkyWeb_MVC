@@ -17,22 +17,38 @@ namespace BulkyWeb.DataAccess.Repository
         public Repository(ApplicationDbContext db)
         {
             _db = db;
-            dbSet =  _db.Set<T>();
+            dbSet =  _db.Set<T>();//_db.Categories = dbset
+            _db.products.Include(u => u.category).Include(u=>u.CategoryId);
         }
         public void Add(T entity)
         {
             dbSet.Add(entity);
         }
-        public T Get(Expression<Func<T, bool>> filter)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;
             query = query.Where(filter);
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var incudeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(incudeProp);
+                }
+            }
             return query.FirstOrDefault();
         }
 
-        public IEnumerable<T> GetAll()
+        //category,CoverType
+        public IEnumerable<T> GetAll(string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach(var incudeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(incudeProp);
+                }
+            }
             return query.ToList();
         }
 
