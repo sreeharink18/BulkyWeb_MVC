@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\**" />
+    <Content Remove="Controllers\**" />
+    <EmbeddedResource Remove="Controllers\**" />
+    <None Remove="Controllers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0-rc.1.23419.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0-rc.1.23419.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0-rc.1.23419.6">
@@ -14,6 +21,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0-rc.1.23461.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BulkyWeb.DataAccess\BulkyWeb.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
