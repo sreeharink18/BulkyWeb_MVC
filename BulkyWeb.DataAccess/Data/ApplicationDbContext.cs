@@ -14,6 +14,7 @@ namespace BulkyWeb.DataAccess.Data
         public DbSet<Category> categories { get; set; }
         public DbSet<Product> products { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public  DbSet<Company> companies { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -108,6 +109,17 @@ namespace BulkyWeb.DataAccess.Data
                     ImageUrl = ""
                 }
             );
+            modelBuilder.Entity<Company>().HasData(
+               new Company { Id = 1, 
+                   Name = "Brototype",
+                   StreetAddress="Maradu" ,
+                   City="Kochi" ,
+                   State="Kerala" ,
+                   PostalCode ="680876",
+                   PhoneNumber ="9246789033"
+               }
+               
+               );
         }
     }
 }

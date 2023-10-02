@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 namespace BulkyWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles =SD.Role_Admin)]
+    //[Authorize(Roles =SD.Role_Admin)]
     public class ProductController : Controller
     {
         public readonly IUnitOfWork _unitOfWork;
