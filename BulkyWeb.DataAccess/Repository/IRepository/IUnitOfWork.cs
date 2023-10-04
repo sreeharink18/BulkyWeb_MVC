@@ -11,6 +11,8 @@ namespace BulkyWeb.DataAccess.Repository.IRepository
         ICategoryRepository Category { get; }
         IProductRepository Product { get; }
         ICompanyRepository Company { get; }
+        IApplicationUserRepository ApplicationUser { get; }
+
         void Save();
     }
 }
