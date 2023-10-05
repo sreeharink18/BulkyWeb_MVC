@@ -4,22 +4,22 @@ using BulkyWeb.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BulkyWeb.DataAccess.Repository
 {
-    public class ApplicationUserRepository : Repository<ApplicationUser>, IApplicationUserRepository
+    public class ShoppingCartRepository : Repository<ShoppingCart>, IShoppingCartRepository
     {
         public readonly ApplicationDbContext _db;
-        public ApplicationUserRepository(ApplicationDbContext db) : base(db)
+        public ShoppingCartRepository(ApplicationDbContext db) : base(db) 
         {
             _db = db;
         }
-
-       /* public void Update(ApplicationUser applicationUser)
+        public void Update(ShoppingCart obj)
         {
-            _db.ApplicationUsers.Update(applicationUser);
-        }*/
+            _db.ShoppingCarts.Update(obj);
+        }
     }
 }

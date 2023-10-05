@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace BulkyWeb.DataAccess.Repository.IRepository
 {
-    public interface IApplicationUserRepository : IRepository<ApplicationUser>
+    public interface IShoppingCartRepository : IRepository<ShoppingCart>
     {
-      
+        void Update(ShoppingCart shoppingCart);
     }
 }
