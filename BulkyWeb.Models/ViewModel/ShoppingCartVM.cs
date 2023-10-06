@@ -8,8 +8,8 @@ namespace BulkyWeb.Models.ViewModel
 {
     public class ShoppingCartVM
     {
-        public ShoppingCartVM() {
-            
-        }
+       public double OrderTotal { get; set; }
+        public IEnumerable<ShoppingCart> shoppingCartsList { get; set; }
+
     }
 }
