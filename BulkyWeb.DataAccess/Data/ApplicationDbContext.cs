@@ -1,4 +1,5 @@
 ﻿using BulkyWeb.Models;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,10 @@ namespace BulkyWeb.DataAccess.Data
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public  DbSet<Company> companies { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public DbSet<OrderDetail> orderDetails { get; set; }
+        public DbSet<OrderHeader> orderHeader { get; set; }
+        
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
