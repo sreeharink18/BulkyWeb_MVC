@@ -62,7 +62,7 @@
                             @*  <select asp-for="CategoryId" asp-items="ViewBag.CategoryList" class="form-select border-0 shadow">
                             <option disabled selected>--Selected Category--</option>
                             </select> *@
-                            <select asp-for="@Model.Product.CategoryId" asp-items="@Model.CategoryList" class="form-select border-0 shadow">
+                            <select asp-for="Product.CategoryId" asp-items="@Model.CategoryList" class="form-select border-0 shadow">
                                 <option disabled selected>--Selected Category--</option>
                             </select>
                             <label asp-for="Product.CategoryId" class="ms-2"></label>
