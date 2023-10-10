@@ -5,11 +5,11 @@ $(document).ready(function () {
 });
 
 function loadDataTable() {
-    if ($.fn.DataTable.isDataTable('#tblData')) {
+    /*if ($.fn.DataTable.isDataTable('#tblData')) {
         $('#tblData').DataTable().destroy();
-    }
+    }*/
     dataTable = $('#tblData').DataTable({
-        "ajax": {url: '/admin/user/getall'},
+        "ajax": {url: '/admin/user/get'},
         "columns": [
             { data: 'name',"width" :"15%" },
             { data: 'email', "width": "15%" },
@@ -17,7 +17,7 @@ function loadDataTable() {
             { data: 'company.name', "width": "15%" },
             { data: '', "width": "10%" },
            
-            {
+           /* {
                 data: 'id',
                 "render": function (data) {
                     return `<div class="w-75 btn-group" role="group">
@@ -26,7 +26,7 @@ function loadDataTable() {
                     </div>`
                 },
                 "width": "25%",
-            },
+            },*/
         ]
     });
 }

@@ -33,9 +33,9 @@ namespace BulkyWeb.Areas.Admin.Controllers
        
         #region API CALLS
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult Get()
         {
-            List<ApplicationUser> userfromdb = _context.ApplicationUsers.Include(u => u.company).ToList();
+            List<ApplicationUser> userfromdb = _context.ApplicationUsers.Include(u=>u.company).ToList();
             return Json(new { data = userfromdb });
         }
         [HttpDelete]
