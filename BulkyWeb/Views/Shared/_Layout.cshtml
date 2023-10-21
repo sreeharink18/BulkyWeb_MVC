@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -30,8 +33,8 @@
                         <li class="nav-item">
                             <a class="nav-link " asp-area="Admin" asp-controller="Order" asp-action="Index">OrderMangement</a>
                         </li>
-                      @*   @if (User.IsInRole(SD.Role_Admin))
-                        { *@
+                        @if (User.IsInRole(SD.Role_Admin))
+                        {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Content Management
@@ -54,12 +57,14 @@
                                 </ul>
 
                             </li>
-                        @* } *@
-                        <li class="nav-item">
-                            <a class="nav-link " asp-area="Customer" asp-controller="Cart" asp-action="Index">
-                                <i class="bi bi-cart"></i>&nbsp;(0)
-                            </a>
-                        </li>
+                        }
+                      
+                            <li class="nav-item">
+                                <a class="nav-link " asp-area="Customer" asp-controller="Cart" asp-action="Index">
+                                   @await Component.InvokeAsync("ShoppingCart")
+                                </a>
+                            </li>
+                  
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -86,7 +91,7 @@
     <script src="~/js/user.js" asp-append-version="true"></script>
     <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script src="https://cdn.tiny.cloud/1/8ro4fww41buo6grq6wjpfozo5itxg3vk9bbvn726t66lzll3/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/8ro4fww41buo6grq6wjpfozo5itxg3vk9bbvn726t66lzll3/tinymce/6/plugins.min.js" referrerpolicy="origin"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

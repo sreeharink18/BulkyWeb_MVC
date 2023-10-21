@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="card-body p-4">
-        <form method="post">
+        <form method="post" id="yourFormId">
             <input asp-for="Id" hidden />
             <div class="border p-3 mt-4">
                 <div class="form-floating py-2 col-12">
@@ -20,10 +20,10 @@
                     <input asp-for="DisplayOrder" disabled class="form-control border-0 shadow" />
                     <label asp-for="DisplayOrder" class="ms-2"></label>
                 </div>
-
+               
                 <div class="row mt-3">
                     <div class="col-6 col-md-3">
-                        <button type="submit" class="btn btn-danger form-control">Delete</button>
+                        <button onclick="return Removecheck()" type="submit" class="btn btn-danger form-control">Delete</button>
                     </div>
                     <div class="col-6 col-md-3">
                         <a asp-controller="Product" asp-action="Index" class="btn btn-secondary border  form-control">
@@ -42,4 +42,36 @@
     @{
         <partial name="_ValidationScriptsPartial" />
     }
+    <script>
+        function Removecheck() {
+            // Get the category count from ViewBag
+            var categoryCount = @ViewBag.CategoryCount;
+
+            // Check if the category count is equal to 1
+            if (categoryCount === 1) {
+                // Display an alert only when the count is 1
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'This is the only category. Are you sure you want to delete it?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    // If the user clicks "OK," continue with form submission
+                    if (result.isConfirmed) {
+                        document.getElementById('yourFormId').submit(); // Submit the form
+                    }
+                });
+
+                return false;
+            }
+
+            // If the count is not 1, continue with form submission
+            return true;
+        }
+    </script>
+
 }

@@ -19,5 +19,8 @@
 		public const string PaymentStatusApproved = "Approved";
 		public const string PaymentStatusDelayedPayment = "DelayedForPayment";
 		public const string PaymentStatusRejected = "Rejected";
-	}
+
+        public const string sessionCart = "SessionShoppingCart";
+
+    }
 }

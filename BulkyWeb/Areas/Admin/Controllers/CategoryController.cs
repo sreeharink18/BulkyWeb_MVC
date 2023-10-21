@@ -12,6 +12,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
     [Authorize(Roles = SD.Role_Admin)]
     public class CategoryController : Controller
     {
+        public static int categoryCount;
         public readonly IUnitOfWork _unitOfWork;
         public CategoryController(IUnitOfWork unitOfWork)
         {
@@ -20,6 +21,8 @@ namespace BulkyWeb.Areas.Admin.Controllers
         public IActionResult Index()
         {
             List<Category> category = _unitOfWork.Category.GetAll().ToList();
+            categoryCount = category.Count();
+            ViewBag.CategoryCount = categoryCount;
             return View(category);
         }
         public IActionResult Create()
@@ -81,6 +84,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
             Category? CategoryFromDb1 = _unitOfWork.Category.Get(u => u.Id == id);
             /*Category? CategoryFromDb = _db.Categories.Find(id);*//*
             Category? CategoryFromDb2 = _db.Categories.Where(u=>u.Id==id).FirstOrDefault();*/
+            ViewBag.CategoryCount = categoryCount;
             if (CategoryFromDb1 == null)
             {
                 return NotFound();
