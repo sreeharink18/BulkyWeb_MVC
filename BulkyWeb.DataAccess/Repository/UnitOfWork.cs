@@ -19,6 +19,7 @@ namespace BulkyWeb.DataAccess.Repository
         public IShoppingCartRepository ShoppingCart { get; private set; }
         public IOrderHeaderRepository OrderHeader { get; private set; }
         public IOrderDetailRepository OrderDetail { get; private set; }
+        public IAddMultipleAddressRepository AddMultipleAddressess { get; private set; }
         public UnitOfWork(ApplicationDbContext db)
         {
             _context = db;
@@ -29,6 +30,7 @@ namespace BulkyWeb.DataAccess.Repository
             ShoppingCart =new ShoppingCartRepository(_context);
             OrderHeader =new OrderHeaderRepository(_context);
             OrderDetail =new OrderDetailRepository(_context);
+            AddMultipleAddressess =new AddMultipleAddressRepository(_context);
         }
         public void Save()
         {

@@ -82,7 +82,9 @@
 
 								</div>
 							</div>
+							<a asp-area="Customer" asp-controller="AddMultipleAddress" asp-action="Index" class="btn btn-primary mt-3 text-center ms-5">Set Address</a>
 						</div>
+						
 						<div class="col-12 col-lg-5 offset-lg-1">
 							<h4 class="d-flex justify-content-between align-items-center mb-3">
 								<span class="text-info">Order Summary:</span>
@@ -90,11 +92,15 @@
                             <ul class="list-group mb-3">
 								@foreach (var item in Model.shoppingCartsList)
 								{
+									
 								    <li class="list-group-item d-flex justify-content-between">
-                                        <div>
-                                            <h6 class="my-0">@item.Product.Title</h6>
-                                            <small class="text-muted">Quantity: Count</small>
-                                        </div>
+										<div class="d-none d-lg-block col-lg-1 text-center py-2">
+											<img src="@item.Product.ImageUrl" class="rounded" width="100%" />								
+										</div>
+										<div>
+											<h6 class="me-5 my-0">@item.Product.Title</h6>
+											<small class="me-5 text-muted">Quantity: @item.Count</small>
+										</div>
                                         <span class="text-muted">@((item.Product.Price * item.Count).ToString("c")) </span>
                                     </li>
 								}
@@ -102,7 +108,7 @@
 
 
                                 <li class="list-group-item d-flex justify-content-between bg-light">
-                                    <small class="text-info">Total (USD)</small>
+                                    <small class="text-info">Total (INR)</small>
                                     <strong class="text-info">@Model.OrderHeader.OrderTotal.ToString("c")</strong>
                                 </li>
                             </ul>

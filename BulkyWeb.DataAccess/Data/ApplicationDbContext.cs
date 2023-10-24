@@ -19,9 +19,9 @@ namespace BulkyWeb.DataAccess.Data
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public DbSet<OrderDetail> orderDetails { get; set; }
         public DbSet<OrderHeader> orderHeader { get; set; }
-        
-        
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		public DbSet<MultipleAddress> MultipleAddresses { get; set; }
+
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Category>().HasData(

@@ -12,6 +12,11 @@ namespace BulkyWeb.Models
     public class OrderHeader
     {
         public int Id { get; set; }
+
+        public int MultipleAddressId { get; set; }
+        [ForeignKey("MultipleAddressId")]
+        [ValidateNever]
+        public MultipleAddress MultipleAddress { get; set; }
         public string ApplicationUserId { get; set; }
         [ForeignKey("ApplicationUserId")]
         [ValidateNever]

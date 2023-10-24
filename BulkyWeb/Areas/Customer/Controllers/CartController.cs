@@ -37,6 +37,50 @@ namespace BulkyWeb.Areas.Customer.Controllers
             }
             return View(ShoppingCartVM);
         }
+        public IActionResult setAddress(int? id)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ShoppingCartVM = new()
+            {
+                shoppingCartsList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == UserId, includeProperties: "Product"),
+                OrderHeader = new()
+            };
+            if(id == null)
+            {
+                ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == UserId);
+
+                ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.ApplicationUser.Name;
+                ShoppingCartVM.OrderHeader.State = ShoppingCartVM.OrderHeader.ApplicationUser.State;
+                ShoppingCartVM.OrderHeader.StreetAddress = ShoppingCartVM.OrderHeader.ApplicationUser.StreetAddress;
+                ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.ApplicationUser.PostCode;
+                ShoppingCartVM.OrderHeader.City = ShoppingCartVM.OrderHeader.ApplicationUser.City;
+                ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
+            }
+            else
+            {
+                ShoppingCartVM.OrderHeader.MultipleAddress = _unitOfWork.AddMultipleAddressess.Get(u => u.Id == id);
+
+                ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.MultipleAddress.Name;
+                ShoppingCartVM.OrderHeader.State = ShoppingCartVM.OrderHeader.MultipleAddress.State;
+                ShoppingCartVM.OrderHeader.StreetAddress = ShoppingCartVM.OrderHeader.MultipleAddress.StreetAddress;
+                ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.MultipleAddress.PostalCode;
+                ShoppingCartVM.OrderHeader.City = ShoppingCartVM.OrderHeader.MultipleAddress.City;
+                ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.MultipleAddress.PhoneNumber;
+            }
+           
+
+            //Insert total amount
+            foreach (var cart in ShoppingCartVM.shoppingCartsList)
+            {
+                cart.Price = GetPriceBasedOnQuantity(cart);
+                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+            }
+            return View(ShoppingCartVM);
+
+
+
+        }
         public IActionResult Summary()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
