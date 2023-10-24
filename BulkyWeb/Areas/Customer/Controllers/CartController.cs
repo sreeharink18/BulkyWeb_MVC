@@ -112,7 +112,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
         }
 
         [HttpPost]
-        [ActionName("Summary")]
+        [ActionName("setAddress")]
         public IActionResult SummaryPost()
         {
 	        var UserIdentity = (ClaimsIdentity)User.Identity;
