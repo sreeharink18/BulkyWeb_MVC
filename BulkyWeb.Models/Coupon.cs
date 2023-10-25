@@ -18,9 +18,9 @@ namespace BulkyWeb.Models
         [Required]
         [MinLength(6)]
         [MaxLength(6)]
-        public int CouponCode { get; set; }
+        public string CouponCode { get; set; }
 
-        public string IsValid { get; set; }
+        public string? IsValid { get; set; }
 
     }
 }
