@@ -20,8 +20,9 @@ namespace BulkyWeb.DataAccess.Data
         public DbSet<OrderDetail> orderDetails { get; set; }
         public DbSet<OrderHeader> orderHeader { get; set; }
 		public DbSet<MultipleAddress> MultipleAddresses { get; set; }
+        public DbSet<Coupon> coupons { get; set; }
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Category>().HasData(

@@ -33,6 +33,7 @@ function loadDataTable(status) {
             { data: 'phoneNumber', "width": "15%" },
             { data: 'applicationUser.email', "width": "15%" },
             { data: 'orderStatus', "width": "15%" },
+            { data: 'paymentMethod', "width": "10%" },
             { data: 'orderTotal', "width": "10%" },
             
 
@@ -44,7 +45,7 @@ function loadDataTable(status) {
                     
                     </div>`
                 },
-                "width": "25%",
+                "width": "15%",
             },
         ]
     });

@@ -115,10 +115,22 @@
                                     <strong class="text-info">@Model.OrderHeader.OrderTotal.ToString("c")</strong>
                                 </li>
                             </ul>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" asp-for="OrderHeader.PaymentMethod" value="COD" id="flexRadioDefault1">
+								<label class="form-check-label" for="flexRadioDefault1">Cash On Delivery</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" asp-for="OrderHeader.PaymentMethod" value="OnlinePayment" id="flexRadioDefault2" checked>
+								<label class="form-check-label" for="flexRadioDefault2">Online Payment</label>
+							</div>
 						</div>
+						
 					</div>
+				
 				</div>
+				
 			</div>
+			
 			<div class="card-footer">
 				<div class="row">
 					<div class="col-12 col-md-8 pt-2">

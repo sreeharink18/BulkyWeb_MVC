@@ -4,6 +4,7 @@ using BulkyWeb.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BulkyWeb.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231025044930_addPaymentMethodInOrderHeader")]
+    partial class addPaymentMethodInOrderHeader
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,37 +125,6 @@ namespace BulkyWeb.DataAccess.Migrations
                             State = "Kerala",
                             StreetAddress = "Maradu"
                         });
-                });
-
-            modelBuilder.Entity("BulkyWeb.Models.Coupon", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CouponCode")
-                        .HasMaxLength(6)
-                        .HasColumnType("int");
-
-                    b.Property<int>("DiscountAmout")
-                        .HasColumnType("int");
-
-                    b.Property<string>("IsValid")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MinAmout")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("coupons");
                 });
 
             modelBuilder.Entity("BulkyWeb.Models.MultipleAddress", b =>

@@ -14,6 +14,10 @@
 		public const string StatusCancelled = "Cancelled";
 		public const string StatusRefunded = "Refunded";
 
+        public const string PaymentMethodOnline = "OnlinePayment";
+        public const string PaymentMethodCOD = "COD";
+
+		public const string PaymentMethodCODPending = "CODPending";
 
 		public const string PaymentStatusPending = "Pending";
 		public const string PaymentStatusApproved = "Approved";
