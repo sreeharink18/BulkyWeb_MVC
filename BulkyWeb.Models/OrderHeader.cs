@@ -27,6 +27,9 @@ namespace BulkyWeb.Models
 
         public string PaymentMethod { get; set; }
 
+        public string? CouponCode { get; set; }  
+        public int? CouponId { get; set; }
+
         public  string? OrderStatus { get; set; }
         public string? PaymentStatus { get; set; }
         public string? TrackingNumber { get; set; }

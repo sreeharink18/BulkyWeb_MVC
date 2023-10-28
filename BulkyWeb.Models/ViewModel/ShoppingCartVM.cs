@@ -13,6 +13,7 @@ namespace BulkyWeb.Models.ViewModel
         public OrderHeader OrderHeader { get; set; }
         public MultipleAddress MultipleAddress { get; set; }
        
+        public List<Coupon> CouponList { get; set; }
 
     }
 }

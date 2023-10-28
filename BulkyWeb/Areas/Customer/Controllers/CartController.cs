@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using BulkyWeb.Utility;
 using Stripe.Checkout;
+using Stripe;
+using Coupon = BulkyWeb.Models.Coupon;
 
 namespace BulkyWeb.Areas.Customer.Controllers
 {
@@ -13,9 +15,16 @@ namespace BulkyWeb.Areas.Customer.Controllers
     [Authorize]
     public class CartController : Controller
     {
-        [BindProperty]
+       /* public static int Ordertotal;
+        public static int flag=0;
+        public static Coupon couponcode ;*/
+		
+		[BindProperty]
         public ShoppingCartVM ShoppingCartVM { get; set; }
-        private IUnitOfWork _unitOfWork;
+	
+
+		private IUnitOfWork _unitOfWork;
+        
         public CartController(IUnitOfWork unitOfWork) { 
             _unitOfWork = unitOfWork;
         }
@@ -37,7 +46,65 @@ namespace BulkyWeb.Areas.Customer.Controllers
             }
             return View(ShoppingCartVM);
         }
-        public IActionResult setAddress(int? id)
+      /*  [HttpPost]
+        public IActionResult Index(ShoppingCartVM shoppingCartVM)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ShoppingCartVM = new()
+            {
+                shoppingCartsList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == UserId, includeProperties: "Product"),
+                OrderHeader = new(),
+                CouponList=_unitOfWork.Coupon.GetAll().ToList(),
+
+            };
+
+            foreach (var cart in ShoppingCartVM.shoppingCartsList)
+            {
+                cart.Price = GetPriceBasedOnQuantity(cart);
+                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+            }
+			couponcode = _unitOfWork.Coupon.Get(u=>u.CouponCode == shoppingCartVM.OrderHeader.CouponCode);
+            if(couponcode != null)
+            {
+                flag = 1;
+				Ordertotal = (int)ShoppingCartVM.OrderHeader.OrderTotal;
+				if (Ordertotal >= couponcode.MinAmout)
+                {
+					Ordertotal = Ordertotal - couponcode.DiscountAmout;
+                }
+                ShoppingCartVM.OrderHeader.OrderTotal = Ordertotal;
+                ShoppingCartVM.OrderHeader.CouponCode = couponcode.CouponCode;
+                *//*_unitOfWork.OrderHeader.Update(shoppingCartVM.OrderHeader);
+                _unitOfWork.Save();
+*//*
+            }
+            
+            return View(ShoppingCartVM);
+        }*/
+       
+		public IActionResult CheckOutCoupon(ShoppingCartVM shoppingCartVM)
+		{
+			var claimsIdentity = (ClaimsIdentity)User.Identity;
+			var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+			ShoppingCartVM = new()
+			{
+				shoppingCartsList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == UserId, includeProperties: "Product"),
+				OrderHeader = new(),
+				CouponList = _unitOfWork.Coupon.GetAll().ToList(),
+
+			};
+
+			foreach (var cart in ShoppingCartVM.shoppingCartsList)
+			{
+				cart.Price = GetPriceBasedOnQuantity(cart);
+				ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+			}
+		   
+
+			return View(ShoppingCartVM);
+		}
+		public IActionResult setAddress(int? id)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -68,20 +135,19 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 ShoppingCartVM.OrderHeader.City = ShoppingCartVM.OrderHeader.MultipleAddress.City;
                 ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.MultipleAddress.PhoneNumber;
             }
+
            
-
+				foreach (var cart in ShoppingCartVM.shoppingCartsList)
+				{
+					cart.Price = GetPriceBasedOnQuantity(cart);
+					ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+				}
+          
             //Insert total amount
-            foreach (var cart in ShoppingCartVM.shoppingCartsList)
-            {
-                cart.Price = GetPriceBasedOnQuantity(cart);
-                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
-            }
+
             return View(ShoppingCartVM);
-
-
-
         }
-        public IActionResult Summary()
+    /*    public IActionResult Summary()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -100,16 +166,13 @@ namespace BulkyWeb.Areas.Customer.Controllers
             ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
 
             //Insert total amount
-            foreach (var cart in ShoppingCartVM.shoppingCartsList)
+            *//*foreach (var cart in ShoppingCartVM.shoppingCartsList)
             {
                 cart.Price = GetPriceBasedOnQuantity(cart);
                 ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
-            }
+            }*//*
             return View(ShoppingCartVM);  
-
-
-
-        }
+        }*/
 
         [HttpPost]
         [ActionName("setAddress")]
@@ -126,21 +189,19 @@ namespace BulkyWeb.Areas.Customer.Controllers
 			ShoppingCartVM.OrderHeader.ApplicationUserId = UserId;
 
 			ApplicationUser applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == UserId);
+          	foreach (var cart in ShoppingCartVM.shoppingCartsList)
+				{
+					cart.Price = GetPriceBasedOnQuantity(cart);
+					ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
 
-			foreach (var cart in ShoppingCartVM.shoppingCartsList)
-			{
-				cart.Price = GetPriceBasedOnQuantity(cart);
-				ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
-
-			}
+				}
+                
+           
             //Its is COD 
             if (ShoppingCartVM.OrderHeader.PaymentMethod == SD.PaymentMethodCOD.ToString())
             {
                 ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentMethodCODPending;
-                ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusApproved;
-
-
-                
+                ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusApproved;          
                 _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
                 _unitOfWork.Save();
                 foreach (var cart in ShoppingCartVM.shoppingCartsList)
@@ -155,8 +216,6 @@ namespace BulkyWeb.Areas.Customer.Controllers
                     _unitOfWork.OrderDetail.Add(orderDetail);
                     _unitOfWork.Save();
                 }
-
-
             }//Online Payment
             else if(ShoppingCartVM.OrderHeader.PaymentMethod == SD.PaymentMethodOnline.ToString())
             {
@@ -191,6 +250,18 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
 				if (applicationUser.CompanyId.GetValueOrDefault() == 0)
 				{
+
+                    decimal totalAmount=(decimal)ShoppingCartVM.OrderHeader.OrderTotal;
+
+					if (!string.IsNullOrEmpty(ShoppingCartVM.OrderHeader.CouponCode))
+                    {
+						var coupon = _unitOfWork.Coupon.Get(u => u.CouponCode == ShoppingCartVM.OrderHeader.CouponCode);
+                        totalAmount = CouponCheckOut(ShoppingCartVM.OrderHeader.CouponCode, (int)ShoppingCartVM.OrderHeader.OrderTotal);
+                        if(coupon != null)
+                        {
+                            ShoppingCartVM.OrderHeader.OrderTotal = (double)totalAmount;
+                        }
+					}
 					//stripe implementation regular customer   
 					var domain = "https://localhost:7279/";
 					var options = new SessionCreateOptions
@@ -200,27 +271,57 @@ namespace BulkyWeb.Areas.Customer.Controllers
 						LineItems = new List<SessionLineItemOptions>(),
 						Mode = "payment",
 					};
+					
 
-					foreach (var item in ShoppingCartVM.shoppingCartsList)
-					{
+					// Create a payment intent
+					
+
+					
 						var sessionLineItem = new SessionLineItemOptions
 						{
 							PriceData = new SessionLineItemPriceDataOptions()
 							{
-								UnitAmount = (long)(item.Price * 100), //its can include in here about amount
+								UnitAmount = (long?)(totalAmount * 100), //its can include in here about amount
 								Currency = "INR",
+                                
 								ProductData = new SessionLineItemPriceDataProductDataOptions()
 								{
-									Name = item.Product.Title
+                                    /*foreach(var item  in ShoppingCartVM.shoppingCartsList)
+                                    {
+						            Name = item.Product.Title,
+
+									}*/
+					                Name = "Book Store",
 								}
 
 							},
-							Quantity = item.Count
+							Quantity = 1,
 
-						};
-						options.LineItems.Add(sessionLineItem);
+                        };
+                        
 
-					}
+
+                        options.LineItems.Add(sessionLineItem);
+
+
+					//foreach (var item in ShoppingCartVM.ShoppingCartList)
+					//{
+					//    var sessionLineItem = new SessionLineItemOptions
+					//    {
+					//        PriceData = new SessionLineItemPriceDataOptions
+					//        {
+					//            UnitAmount = (long)(item.Price * 100),
+					//            Currency = "inr",
+					//            ProductData = new SessionLineItemPriceDataProductDataOptions
+					//            {
+					//                Name = item.Product.Title
+					//            }
+					//        },
+					//        Quantity = item.Count
+					//    };
+					//    options.LineItems.Add(sessionLineItem);
+					//}
+
 					var service = new SessionService();
 					Session session = service.Create(options);
 					_unitOfWork.OrderHeader.UpdateStripePaymentID(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
@@ -309,5 +410,76 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 return shoppingCart.Product.Price100;
             }
         }
-    }
+        public async Task<IActionResult> Coupon(string coupon, int? OrderTotal)
+        {
+            if(string.IsNullOrEmpty(coupon) || OrderTotal== null)
+            {
+                return BadRequest();
+            }
+            var couponobj = _unitOfWork.Coupon.Get(u=>u.CouponCode == coupon);
+
+            if(couponobj != null)
+            {
+                if(couponobj.DiscountAmout < OrderTotal)
+                {
+                    decimal discountPrice = (decimal)couponobj.DiscountAmout;
+                    decimal cartTotal = (decimal)OrderTotal;
+                    if(couponobj.DiscountAmout > 0)
+                    {
+                        discountPrice = cartTotal-couponobj.DiscountAmout;
+                    }
+                    else
+                    {
+						discountPrice = (decimal)(cartTotal - (cartTotal) * (couponobj.DiscountAmout / 100));
+					}
+                    decimal newTotal = (decimal)(OrderTotal - discountPrice);
+                    
+                    var responce = new {
+                        success = true,
+						discountPrice,
+						newTotal
+					};
+                    return Json(responce);
+                }
+                else
+                {
+					TempData["error"] = "Order total is below the minimum purchase amount.";
+                    var responce = new {
+                        success= false,
+                        errorMessage = "Order total is below the minimum purchase amount."
+				
+				    };
+                    return Json(responce);
+                }
+            }
+			TempData["error"] = "Coupon not found.";
+			var responsed = new
+			{
+				success = false,
+				errorMessage = "Coupon not found"
+			};
+			return Json(responsed);
+		}
+        private decimal CouponCheckOut(string couponCode,int orderTotal)
+        {
+            var couponobj = _unitOfWork.Coupon.Get(u=>u.CouponCode == couponCode);
+            decimal newTotal=(decimal)orderTotal;
+            if(couponobj != null)
+            {
+                if(couponobj.MinAmout < orderTotal)
+                {
+                    if(couponobj.DiscountAmout > 0)
+                    {
+                        newTotal = (decimal)(orderTotal - couponobj.DiscountAmout);
+                    }
+                    else
+                    {
+                        newTotal = (decimal)(orderTotal - (orderTotal) * (couponobj.DiscountAmout / 100));
+					}
+                }
+            }
+            return newTotal;
+        }
+
+	}
 }
