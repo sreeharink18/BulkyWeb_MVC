@@ -68,8 +68,46 @@ namespace BulkyWeb.Areas.Customer.Controllers
         }
         public IActionResult Privacy()
         {
+           
+
             return View();
             
+        }
+        [Authorize]
+        public IActionResult UserProfile()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            ApplicationUser Userobj = _unitOfWork.ApplicationUser.Get(u => u.Id == UserId);
+            if (Userobj != null)
+            {
+                return View(Userobj);
+            }
+            return View();
+        }
+        public IActionResult EditUserProfile()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            ApplicationUser Userobj = _unitOfWork.ApplicationUser.Get(u => u.Id == UserId);
+            if (Userobj != null)
+            {
+                return View(Userobj);
+            }
+            return View();
+        }
+        [HttpPost]
+        public IActionResult EditUserProfile(ApplicationUser applicationUser)
+        {
+            if (ModelState.IsValid)
+            {
+                _unitOfWork.ApplicationUser.Update(applicationUser);
+                _unitOfWork.Save();
+                return RedirectToAction(nameof(UserProfile));
+            }
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

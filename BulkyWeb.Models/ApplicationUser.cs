@@ -22,5 +22,7 @@ namespace BulkyWeb.Models
         [ValidateNever]
         [ForeignKey("CompanyId")]
         public Company? company { get; set; }
+
+        public int? Wallet { get; set; }
     }
 }

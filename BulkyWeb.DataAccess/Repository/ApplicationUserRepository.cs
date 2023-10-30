@@ -17,9 +17,19 @@ namespace BulkyWeb.DataAccess.Repository
             _db = db;
         }
 
-       /* public void Update(ApplicationUser applicationUser)
+        public void Update(ApplicationUser obj)
         {
-            _db.ApplicationUsers.Update(applicationUser);
-        }*/
+            var applicatiionUser =_db.ApplicationUsers.FirstOrDefault(u => u.Id == obj.Id);
+            if(applicatiionUser != null)
+            {
+                applicatiionUser.PhoneNumber = obj.PhoneNumber;
+                applicatiionUser.Name = obj.Name;
+                applicatiionUser.StreetAddress = obj.StreetAddress;
+                applicatiionUser.City   = obj.City;
+                applicatiionUser.State = obj.State;
+                applicatiionUser.PostCode = obj.PostCode;
+            }
+           
+        }
     }
 }
