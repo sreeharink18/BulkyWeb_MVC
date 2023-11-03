@@ -1,9 +1,11 @@
 using BulkyWeb.DataAccess.Repository.IRepository;
 using BulkyWeb.Models;
+using BulkyWeb.Models.ViewModel;
 using BulkyWeb.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -68,13 +70,10 @@ namespace BulkyWeb.Areas.Customer.Controllers
         }
         public IActionResult Privacy()
         {
-           
-
-            return View();
-            
+            return View(); 
         }
         [Authorize]
-        public IActionResult UserProfile()
+        public  IActionResult UserProfile()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -109,7 +108,95 @@ namespace BulkyWeb.Areas.Customer.Controllers
             }
             return View();
         }
+        public IActionResult Wallet()
+        {
+            var claimIdentity = (ClaimsIdentity)User.Identity;
+            var UserId = claimIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
+            var userobj= _unitOfWork.ApplicationUser.Get(u=>u.Id == UserId);
+            if(userobj.Wallet == null)
+            {
+                userobj.Wallet = 0;
+            }
+            return View(userobj);
+        }
+        [HttpPost]
+        public IActionResult Wallet(ApplicationUser applicationUser)
+        {
+            var claimIdentity = (ClaimsIdentity)User.Identity;
+            var UserId = claimIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var UserObj = _unitOfWork.ApplicationUser.Get(u=>u.Id == UserId);   
+            if(UserObj != null)
+            {
+                if(applicationUser.Wallet !=null)
+                {
+                    if (applicationUser.Wallet <= 0 )
+                    {
+                        TempData["ValueNot"] = "Plz enter the value above 0 ";
+                        return View(applicationUser);
+
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var domain = "https://localhost:7279/";
+                            var options = new SessionCreateOptions
+                            {
+
+                                SuccessUrl = domain + $"customer/Home/WalletSuccess?id={UserObj.Id}",
+                                CancelUrl = domain + "customer/cart/Index",
+                                LineItems = new List<SessionLineItemOptions>(),
+                                Mode = "payment",
+                            };
+                            var sessionLineItem = new SessionLineItemOptions
+                            {
+                                PriceData = new SessionLineItemPriceDataOptions()
+                                {
+                                    UnitAmount = (long?)(applicationUser.Wallet * 100), //its can include in here about amount
+                                    Currency = "INR",
+
+                                    ProductData = new SessionLineItemPriceDataProductDataOptions()
+                                    {
+
+                                        Name = "Book Store",
+                                        Description = "Add amount in your wallet"
+                                    }
+
+                                },
+                                Quantity = 1,
+
+                            };
+                            options.LineItems.Add(sessionLineItem);
+                            var service = new SessionService();
+                            Session session = service.Create(options);
+                            service.Create(options);
+                            UserObj.Wallet += applicationUser.Wallet;
+                            _unitOfWork.ApplicationUser.Update(UserObj);
+                            _unitOfWork.Save();
+                            TempData["success"] = "Add Amount in Wallet";
+                            Response.Headers.Add("Location", session.Url);
+                            return new StatusCodeResult(303);
+                        }catch(Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+                        }
+
+                    }
+                    
+                    return RedirectToAction(nameof(UserProfile));
+                }  
+            }
+            TempData["error"] = "Not add Amount in Wallet";
+            return View(applicationUser);
+
+        }
+        public IActionResult WalletSuccess(string id)
+        {
+           ApplicationUser userObj= _unitOfWork.ApplicationUser.Get(u=>u.Id == id);
+            return View(userObj);
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

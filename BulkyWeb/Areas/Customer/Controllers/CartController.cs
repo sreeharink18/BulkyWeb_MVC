@@ -7,7 +7,6 @@ using System.Security.Claims;
 using BulkyWeb.Utility;
 using Stripe.Checkout;
 using Stripe;
-using Coupon = BulkyWeb.Models.Coupon;
 
 namespace BulkyWeb.Areas.Customer.Controllers
 {
@@ -15,9 +14,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
     [Authorize]
     public class CartController : Controller
     {
-       /* public static int Ordertotal;
-        public static int flag=0;
-        public static Coupon couponcode ;*/
+       
 		
 		[BindProperty]
         public ShoppingCartVM ShoppingCartVM { get; set; }
