@@ -43,7 +43,8 @@ namespace BulkyWeb.DataAccess.Data
                 Price50 = 85,
                 Price100 = 80,
                 CategoryId = 1,
-                ImageUrl =""
+                ImageUrl ="",
+                
             },
                 new Product
                 {

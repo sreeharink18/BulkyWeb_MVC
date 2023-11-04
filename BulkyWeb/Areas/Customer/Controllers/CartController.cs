@@ -192,8 +192,23 @@ namespace BulkyWeb.Areas.Customer.Controllers
 					ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
 
 				}
-                
-           
+            foreach (var cart in ShoppingCartVM.shoppingCartsList)
+            {
+                if (cart.Product != null)
+                {
+                    // Decrement the TotalBookCount based on the cart's Count
+                    if (cart.Product.TotalBooktCount.HasValue)
+                    {
+                        cart.Product.TotalBooktCount -= cart.Count;
+
+                        // Ensure the TotalBookCount doesn't go below 0
+                        if (cart.Product.TotalBooktCount < 0)
+                        {
+                            cart.Product.TotalBooktCount = 0;
+                        }
+                    }
+                }
+            }
             //Its is COD 
             if (ShoppingCartVM.OrderHeader.PaymentMethod == SD.PaymentMethodCOD.ToString())
             {
@@ -244,8 +259,9 @@ namespace BulkyWeb.Areas.Customer.Controllers
 					_unitOfWork.OrderDetail.Add(orderDetail);
 					_unitOfWork.Save();
 				}
+            
 
-				if (applicationUser.CompanyId.GetValueOrDefault() == 0)
+                if (applicationUser.CompanyId.GetValueOrDefault() == 0)
 				{
 
                     decimal totalAmount=(decimal)ShoppingCartVM.OrderHeader.OrderTotal;

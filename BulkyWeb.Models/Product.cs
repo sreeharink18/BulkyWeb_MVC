@@ -48,5 +48,7 @@ namespace BulkyWeb.Models
         public bool DisplayList { get; set; }
         [ValidateNever]
         public string ImageUrl { get; set; }
+
+        public int? TotalBooktCount { get; set; }
     }
 }

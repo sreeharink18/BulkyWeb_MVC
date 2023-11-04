@@ -16,6 +16,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private static int walletAmount;
         public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
@@ -125,6 +126,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
         {
             var claimIdentity = (ClaimsIdentity)User.Identity;
             var UserId = claimIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            SetWalletValue((int)applicationUser.Wallet);
 
             var UserObj = _unitOfWork.ApplicationUser.Get(u=>u.Id == UserId);   
             if(UserObj != null)
@@ -195,7 +197,23 @@ namespace BulkyWeb.Areas.Customer.Controllers
         public IActionResult WalletSuccess(string id)
         {
            ApplicationUser userObj= _unitOfWork.ApplicationUser.Get(u=>u.Id == id);
+            try
+            {
+                ViewBag.WalletAmount = walletAmount;
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            
             return View(userObj);
+        }
+        private void SetWalletValue(int amount)
+        {
+            walletAmount = amount;
+        }
+        private int GetWalletAmount()
+        {
+            return walletAmount;
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

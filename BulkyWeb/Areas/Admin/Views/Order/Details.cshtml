@@ -220,7 +220,7 @@
                                     <li class="list-group-item d-flex justify-content-between p-2">
                                         <div class="row container">
                                             <div class="col-8">
-
+                                                <img src="@item.Product.ImageUrl" width="50px" />
                                                 <h6 class="my-0 text-primary">@item.Product.Title</h6>
                                                 <small class="text-muted">Price : @item.Price</small><br />
                                                 <small class="text-muted">Quantity : @item.Count</small>
@@ -230,8 +230,9 @@
                                             </div>
                                         </div>
                                     </li>
+                                  
                                 }
-                               
+                              
 
                                 <li class="list-group-item bg-primary">
                                     <div class="row container">
@@ -243,6 +244,12 @@
                                         </div>
                                     </div>
                                 </li>
+                                @if (Model.OrderHeader.CouponCode == Model.Coupon.CouponCode)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between p-2">
+                                        <h3>copon apply</h3>
+                                    </li>
+                                }
                             </ul>
                             @if(Model.OrderHeader.OrderStatus == SD.StatusShipping && Model.OrderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment)
                             {

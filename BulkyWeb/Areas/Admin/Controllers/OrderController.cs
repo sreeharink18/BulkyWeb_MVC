@@ -27,10 +27,14 @@ namespace BulkyWeb.Areas.Admin.Controllers
 		}
         public IActionResult Details(int id)
         {
+            var orderHeaderobj = _unitOfWork.OrderHeader.Get(u => u.Id == id);
+
             OrderVM = new()
             {
+                
                 OrderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id, includeProperties : "ApplicationUser"),
-                OrderDetails = _unitOfWork.OrderDetail.GetAll(u => u.OrderId == id, includeProperties:"Product")
+                OrderDetails = _unitOfWork.OrderDetail.GetAll(u => u.OrderId == id, includeProperties:"Product"),
+                Coupon = _unitOfWork.Coupon.Get(u => u.CouponCode == orderHeaderobj.CouponCode),
             };
             return View(OrderVM);
         }
