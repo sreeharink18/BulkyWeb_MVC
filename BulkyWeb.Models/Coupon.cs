@@ -11,7 +11,7 @@ namespace BulkyWeb.Models
     {
         [Key]
         public int Id { get; set; }
-        public string ApplicationUserId { get; set; }
+        public string? ApplicationUserId { get; set; }
         [Required]
         public int MinAmout { get; set; }
         public int DiscountAmout { get; set; }

@@ -2,7 +2,7 @@
 <form method="post" id="yourFormId">
 	<br />
 	<div class="container">
-		<div class="card shadow border-0">
+		<div class="card shadow border-0 mb-5">
 
 			<div class="card-header bg-secondary bg-gradient text-light ml-0 py-4">
 				<div class="row px-4">
@@ -134,7 +134,20 @@
 									Coupon Discount
 									<span id="discountPrice">@*@ViewBag.reducedAmount*@</span>
 								</li>
-                            </ul>
+								<li class="list-group-item align-items-center">
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" id="walletCheckbox" value="ApplyWallet">
+										<label class="form-check-label" for="walletCheckbox">Apply Wallet : <span class="text-bg-light">@Model.ApplicationUser.Wallet</span></label>
+										<div>
+											<span id="WalletAmount"> </span> 
+											<span id="newWalletAmount"></span>
+										</div>
+										<div>
+											<span id="Message" class="text-danger"></span>
+										</div>
+									</div>
+								</li>
+								</ul>
 							<div class="form-check">
 								<input class="form-check-input" type="radio" asp-for="OrderHeader.PaymentMethod" value="COD" id="flexRadioDefault1">
 								<label class="form-check-label" for="flexRadioDefault1">Cash On Delivery</label>
@@ -208,4 +221,94 @@
 		});
 	});
 </script>
+	<script>
+		$(document).ready(function () {
+			$('#walletCheckbox').change(function () {
+				if (this.checked) {
+					// Checkbox is checked, trigger an AJAX request here
+					applyWallet();
+				} else {
+					notApplyWallet();
+				}
+				// You can also handle the case when the checkbox is unchecked
+			});
+		});
+
+		function applyWallet() {
+			var totalAmount = @Model.OrderHeader.OrderTotal;
+			var userId = '@Model.ApplicationUser.Id';
+			var url = "/Customer/Cart/CheckWallet?totalAmount=" + totalAmount + "&userId="+ userId;
+			$.ajax({
+				url: url, // Replace with the actual API endpoint
+				method: 'POST', // Use 'GET', 'POST', or another HTTP method
+				data: {
+					// Include any data you need to send to the server
+				},
+				success: function (response) {
+					console.log(response);
+					if (response.success) {
+
+						var newWalletAmount = response.newWalletAmount;
+						var Message = response.message;
+
+						
+						console.log("newWalletAmount:", newWalletAmount);
+						console.log("Message:", Message);
+
+						var updatedWalletAmount = @Model.ApplicationUser.Wallet - (totalAmount - 40);
+						$("#WalletAmount").text("Wallet Amount: "+@Model.ApplicationUser.Wallet + "-" + (totalAmount-40) + "=");
+
+						$("#newWalletAmount").text(newWalletAmount.toFixed(2));
+						$("#Message").text(Message);
+						
+					}
+					else{
+
+						var newWalletAmount = response.newWalletAmount;
+						var Message = response.message;
+
+
+						console.log("newWalletAmount:", newWalletAmount);
+						console.log("Message:", Message);
+
+						
+						
+
+						$("#newWalletAmount").text(newWalletAmount.toFixed(2));
+						$("#Message").text(Message);
+
+					}
+				},
+				error: function (error) {
+					// Handle errors, if any
+				}
+			});
+		}
+		function notApplyWallet() {
+			var totalAmount = @Model.OrderHeader.OrderTotal;
+			var userId = '@Model.ApplicationUser.Id';
+			var url = "/Customer/Cart/IsNotCheckWallet?totalAmount=" + totalAmount + "&userId=" + userId;
+			$.ajax({
+				url: url, // Replace with the actual API endpoint
+				method: 'POST', // Use 'GET', 'POST', or another HTTP method
+				data: {
+					// Include any data you need to send to the server
+				},
+				success: function (response) {
+					console.log(response);
+					if (response.success) {
+
+						$("#Message").text('');
+						$("#WalletAmount").text('');
+						$("#newWalletAmount").text('');
+
+					}
+				},
+				error: function (error) {
+					// Handle errors, if any
+				}
+			});
+			
+		}
+	</script>
 }

@@ -23,6 +23,11 @@ namespace BulkyWeb.Models
         public ApplicationUser ApplicationUser { get; set; }
         public  DateTime OrderDate { get; set; }
         public  DateTime ShippingDate { get; set; }
+
+        public DateTime? DeliveryDate { get; set; }
+
+        public DateTime? ReturnDate { get; set; }
+
         public double OrderTotal { get; set; }
 
         public string PaymentMethod { get; set; }

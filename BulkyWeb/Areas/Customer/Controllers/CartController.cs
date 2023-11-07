@@ -7,6 +7,7 @@ using System.Security.Claims;
 using BulkyWeb.Utility;
 using Stripe.Checkout;
 using Stripe;
+using Azure;
 
 namespace BulkyWeb.Areas.Customer.Controllers
 {
@@ -21,7 +22,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
 	
 
 		private IUnitOfWork _unitOfWork;
-        
+        public static bool WalletChecked { get; set; }
         public CartController(IUnitOfWork unitOfWork) { 
             _unitOfWork = unitOfWork;
         }
@@ -108,7 +109,8 @@ namespace BulkyWeb.Areas.Customer.Controllers
             ShoppingCartVM = new()
             {
                 shoppingCartsList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == UserId, includeProperties: "Product"),
-                OrderHeader = new()
+                OrderHeader = new(),
+                ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == UserId)
             };
             if(id == null)
             {
@@ -266,6 +268,8 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
                     decimal totalAmount=(decimal)ShoppingCartVM.OrderHeader.OrderTotal;
 
+
+
 					if (!string.IsNullOrEmpty(ShoppingCartVM.OrderHeader.CouponCode))
                     {
 						var coupon = _unitOfWork.Coupon.Get(u => u.CouponCode == ShoppingCartVM.OrderHeader.CouponCode);
@@ -275,8 +279,23 @@ namespace BulkyWeb.Areas.Customer.Controllers
                             ShoppingCartVM.OrderHeader.OrderTotal = (double)totalAmount;
                         }
 					}
-					//stripe implementation regular customer   
-					var domain = "https://localhost:7279/";
+                    if (WalletChecked)
+                    {
+                        totalAmount = 40;
+                        var userobj = _unitOfWork.ApplicationUser.Get(u => u.Id == applicationUser.Id);
+                        int walletAmout = (int)userobj.Wallet;
+                        int totalAmountOrderHeadear = (int)ShoppingCartVM.OrderHeader.OrderTotal-40;
+
+						if (walletAmout > 0)
+                        {
+                            walletAmout = walletAmout - totalAmountOrderHeadear;
+                            userobj.Wallet = walletAmout;
+                            _unitOfWork.ApplicationUser.Update(userobj);
+                            _unitOfWork.Save();
+                        }
+                    }
+                    //stripe implementation regular customer   
+                    var domain = "https://localhost:7279/";
 					var options = new SessionCreateOptions
 					{
 						SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",
@@ -493,6 +512,75 @@ namespace BulkyWeb.Areas.Customer.Controllers
             }
             return newTotal;
         }
+        public IActionResult CheckWallet(int? totalAmount, string? userId)
+        {
+            var userobj = _unitOfWork.ApplicationUser.Get(u=>u.Id == userId);
+   
+			string message = "";
+
+			if (userobj.Wallet > totalAmount - 40)
+            {
+                var newwalletAmount = userobj.Wallet - totalAmount - 40;
+                 message = "If we pay a minimum amount of 40 in online payment";
+				var response = new
+				{
+					success =true,
+                    newWalletAmount = newwalletAmount,
+					Message= message,
+
+				};
+				WalletChecked = true;
+				return Json(response);
+
+            }
+            else
+            {
+				var response = new
+				{
+					success = false,
+					newWalletAmount = (int)totalAmount,
+					Message = "The Wallet have enough Amount"
+
+				};
+				
+				return Json(response);
+			}
+			
+		}
+		public IActionResult IsNotCheckWallet(int? totalAmount, string? userId)
+		{
+			var userobj = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+
+			string message = "";
+
+			if (userobj.Wallet > totalAmount - 40)
+			{
+
+				var newwalletAmount = userobj.Wallet - totalAmount - 40;
+				message = "If we pay a minimum amount of 40 in online payment";
+				var response = new
+				{
+					success = true,
+				
+
+				};
+                WalletChecked = false;
+				return Json(response);
+
+			}
+			else
+			{
+				var response = new
+				{
+					success = false,
+					newWalletAmount = (int)totalAmount,
+					Message = "The Wallet have enough Amount"
+
+				};
+				return Json(response);
+			}
+
+		}
 
 	}
 }

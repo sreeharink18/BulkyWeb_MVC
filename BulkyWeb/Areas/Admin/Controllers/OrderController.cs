@@ -28,7 +28,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
         public IActionResult Details(int id)
         {
             var orderHeaderobj = _unitOfWork.OrderHeader.Get(u => u.Id == id);
-
+            double totalAmount=0;
             OrderVM = new()
             {
                 
@@ -36,6 +36,12 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 OrderDetails = _unitOfWork.OrderDetail.GetAll(u => u.OrderId == id, includeProperties:"Product"),
                 Coupon = _unitOfWork.Coupon.Get(u => u.CouponCode == orderHeaderobj.CouponCode),
             };
+            foreach(var item in OrderVM.OrderDetails) { 
+                int count = item.Count;
+                double price = item.Price;
+                totalAmount += (count * price);
+            }
+            ViewBag.TotalAmount = totalAmount;
             return View(OrderVM);
         }
         [HttpPost]
@@ -91,7 +97,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
             return RedirectToAction(nameof(Details), new { Id = OrderVM.OrderHeader.Id });
         }
         [HttpPost]
-        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+       
         public IActionResult CancelOrder()
         {
             var orderFromdb = _unitOfWork.OrderHeader.Get(u => u.Id == OrderVM.OrderHeader.Id);
@@ -159,6 +165,51 @@ namespace BulkyWeb.Areas.Admin.Controllers
             _unitOfWork.Save();
             Response.Headers.Add("Location", session.Url);
             return new StatusCodeResult(303); 
+        }
+        [HttpPost]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        public IActionResult StatusDelivery()
+        {
+            var orderobj= _unitOfWork.OrderHeader.Get(u=>u.Id==OrderVM.OrderHeader.Id);
+            orderobj.OrderStatus = SD.StatusDelivered;
+            orderobj.DeliveryDate = DateTime.Now;
+            _unitOfWork.OrderHeader.Update(orderobj);
+            _unitOfWork.Save();
+            TempData["success"] = "Order Status Delivery Update Succesfully";
+            return RedirectToAction(nameof(Details), new { Id = OrderVM.OrderHeader.Id });
+        }
+        [HttpPost]
+        public IActionResult ReturnRequest()
+        {
+            var orderobj = _unitOfWork.OrderHeader.Get(u => u.Id == OrderVM.OrderHeader.Id);
+            orderobj.OrderStatus = SD.ReturnRequest;
+            
+            _unitOfWork.OrderHeader.Update(orderobj);
+            _unitOfWork.Save();
+            TempData["success"] = "Sent Return Order Request";
+            return RedirectToAction(nameof(Details), new { Id = OrderVM.OrderHeader.Id });
+        }
+        [HttpPost]
+        public IActionResult OrderReturnConfirmation()
+        {
+            var orderobj = _unitOfWork.OrderHeader.Get(u => u.Id == OrderVM.OrderHeader.Id);
+            var userobj = _unitOfWork.ApplicationUser.Get(u => u.Id == orderobj.ApplicationUserId);
+            orderobj.OrderStatus = SD.StatusReturned;
+            orderobj.PaymentStatus = SD.StatusRefunded;
+            if(orderobj.PaymentMethod == SD.PaymentMethodOnline)
+            {
+                if(userobj.Wallet == null)
+                {
+                    userobj.Wallet = 0;
+                }
+                userobj.Wallet += (int)orderobj.OrderTotal;
+            }
+            orderobj.ReturnDate = DateTime.Now;
+            _unitOfWork.OrderHeader.Update(orderobj);
+            _unitOfWork.ApplicationUser.Update(userobj);
+            _unitOfWork.Save();
+            TempData["success"] = "Order Return  Succesfully";
+            return RedirectToAction(nameof(Details), new { Id = OrderVM.OrderHeader.Id });
         }
         public IActionResult OrderConfirmation(int OrderHeaderId)
         {

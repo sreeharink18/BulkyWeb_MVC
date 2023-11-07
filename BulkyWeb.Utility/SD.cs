@@ -13,6 +13,11 @@
         public const string StatusShipping = "Shipping";
 		public const string StatusCancelled = "Cancelled";
 		public const string StatusRefunded = "Refunded";
+        public const string StatusReturned = "Returned";
+        public const string StatusDelivered = "Delivered";
+
+        public const string ReturnRequest = "ReturnRequest";
+
 
         public const string PaymentMethodOnline = "OnlinePayment";
         public const string PaymentMethodCOD = "COD";

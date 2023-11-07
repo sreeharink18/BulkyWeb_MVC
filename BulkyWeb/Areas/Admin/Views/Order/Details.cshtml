@@ -4,7 +4,7 @@
     <input asp-for="OrderHeader.Id" hidden/>
     <br />
     <div class="container">
-        <div class="card">
+        <div class="card mb-4">
             <div class="card-header bg-dark text-light ml-0">
                 <div class="container row">
                     <div class="col-12 d-none d-md-block col-md-6 pb-1">
@@ -232,7 +232,22 @@
                                     </li>
                                   
                                 }
-                              
+                                @if (Model.OrderHeader.CouponCode != null )
+                                {
+                                    <li class="list-group-item d-flex justify-content-between p-2">
+                                        <div class="row container">
+                                            <div class="col-8">
+                                                
+                                                <h6 class="my-0 text-primary fw-bold">Coupon Apply</h6>
+                                                <small class="text-muted">Total Amount : @ViewBag.TotalAmount</small><br />
+                                                <small class="text-muted">Discount Price : @Model.Coupon.DiscountAmout</small>
+                                            </div>
+                                            <div class="col-4 text-end">
+                                                <p class="text-success">@((ViewBag.TotalAmount) - (Model.Coupon.DiscountAmout))</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
 
                                 <li class="list-group-item bg-primary">
                                     <div class="row container">
@@ -244,12 +259,7 @@
                                         </div>
                                     </div>
                                 </li>
-                                @if (Model.OrderHeader.CouponCode == Model.Coupon.CouponCode)
-                                {
-                                    <li class="list-group-item d-flex justify-content-between p-2">
-                                        <h3>copon apply</h3>
-                                    </li>
-                                }
+                              
                             </ul>
                             @if(Model.OrderHeader.OrderStatus == SD.StatusShipping && Model.OrderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment)
                             {
@@ -265,13 +275,38 @@
                                 {
                                     <button asp-action="ShipOrder" type="submit" onclick="return ValidationInput()" class="btn btn-primary form-control my-1">Ship Order</button>
                                 }
-                                @if (Model.OrderHeader.OrderStatus != SD.StatusRefunded
-                               && Model.OrderHeader.OrderStatus != SD.StatusCancelled
-                               && Model.OrderHeader.OrderStatus != SD.StatusShipping)
+                                @if (Model.OrderHeader.OrderStatus == SD.StatusShipping)
                                 {
-                                    <button asp-action="CancelOrder" type="submit" class="btn btn-danger form-control my-1">Cancel Order</button>
+                                    <button asp-action="StatusDelivery" type="submit" class="btn btn-primary form-control my-1">Delivery</button>
                                 }
-                            }                       
+                               
+                            }
+                            @if (Model.OrderHeader.OrderStatus != SD.StatusRefunded
+                            && Model.OrderHeader.OrderStatus != SD.StatusCancelled
+                            && Model.OrderHeader.OrderStatus != SD.StatusShipping
+                            && Model.OrderHeader.OrderStatus != SD.StatusReturned
+                            &&Model.OrderHeader.OrderStatus != SD.StatusDelivered
+                            &&Model.OrderHeader.OrderStatus !=SD.ReturnRequest)
+                            {
+                                <button asp-action="CancelOrder" type="submit" class="btn btn-danger form-control my-1">Cancel Order</button>
+                            }else if(Model.OrderHeader.OrderStatus == SD.StatusDelivered)
+                            {
+                                <button asp-action="ReturnRequest" type="submit" class="btn btn-danger form-control my-1">Return Order</button>
+                            }
+                            else if(Model.OrderHeader.OrderStatus == SD.ReturnRequest)
+                            {
+                                <h6 class="pt-2 pb-2 text-bg-info text-center">Your Return Request is Processing Please Wait....</h6>
+                            }else if(Model.OrderHeader.OrderStatus == SD.StatusReturned)
+                            {
+                                <h6 class="pt-2 pb-2 text-bg-success text-center">Your Return Request is Completely Successfully!</h6>
+                            }
+                            @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
+                            {
+                                @if (Model.OrderHeader.OrderStatus == SD.ReturnRequest)
+                                {
+                                    <button asp-action="OrderReturnConfirmation" type="submit" class="btn btn-danger form-control my-1">Return Order Confirmation</button>
+                                }
+                            }
                         </div>
                     </div>
                 </div>

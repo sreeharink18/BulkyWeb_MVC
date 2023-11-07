@@ -84,6 +84,23 @@
                                 </div>
                             </div>
                         </div> *@
+                        @if (Model.Product.TotalBooktCount<102)
+                        {
+                            <div class="row text-center mb-3">
+                                <div class="col-12 col-md-6 pb-1">
+                                    <span class="text-danger  fw-bold m-4">Only few more left</span>
+                                </div>
+                            </div>
+                        }
+                        else if (Model.Product.TotalBooktCount <=0 )
+                        {
+                            <div class="row text-center mb-3">
+                                <div class="col-12 col-md-6 pb-1">
+                                    <span class="text-danger  fw-bold m-4">Out of Stock</span>
+                                </div>
+                            </div>
+                        }
+
                         <input asp-for="Count" type="hidden" value="1" />
                         <div class="row">
                             <div class="col-12 col-md-6 pb-1">
