@@ -1,17 +1,16 @@
 ﻿@model Coupon
-
 <div class="card shadow border-0 mt-4">
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
-                <h2 class="text-white py-2">Add Coupon</h2>
-               
+                <h2 class="text-white py-2">Edit Category</h2>
             </div>
         </div>
     </div>
     <div class="card-body p-4">
-        <form method="post" class="row">
-            <div class="border p-3">
+        <form method="post">
+            <input asp-for="Id" hidden />
+            <div class="border p-3 mt-4">
                 @*<div asp-validation-summary="ModelOnly"></div>*@
                 <div class="form-floating py-2 col-12">
                     <input asp-for="CouponCode" class="form-control border-0 shadow" />
@@ -28,13 +27,25 @@
                     <label asp-for="DiscountAmout" class="ms-2"></label>
                     <span asp-validation-for="DiscountAmout" class="text-danger"></span>
                 </div>
+                <div class="form-floating py-2 col-12">
+                   <div>
+                        <input type="radio" asp-for="IsValid" name="IsValid" value="Valid" />
+                        <label class="ms-2">Valid</label>
+                   </div>
+                   <div>
+                        <input type="radio" asp-for="IsValid" name="IsValid" value="InValid" />
+                        <label class="ms-2">InValid</label>
+                   </div>
+                  
+                    <span asp-validation-for="IsValid" class="text-danger"></span>
+                </div>
 
-                <div class="row pt-2">
+                <div class="row mt-3">
                     <div class="col-6 col-md-3">
-                        <button type="submit" class="btn btn-primary form-control">Create</button>
+                        <button type="submit" class="btn btn-primary form-control">Update</button>
                     </div>
                     <div class="col-6 col-md-3">
-                        <a asp-area="Admin" asp-controller="Coupon" asp-action="Index" class="btn btn-outline-primary border  form-control">
+                        <a asp-controller="Category" asp-action="Index" class="btn btn-secondary border  form-control">
                             Back to List
                         </a>
                     </div>
@@ -45,9 +56,6 @@
         </form>
     </div>
 </div>
-
-
-
 
 @section Scripts{
     @{

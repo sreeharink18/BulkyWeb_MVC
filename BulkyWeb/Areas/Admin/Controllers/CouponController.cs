@@ -17,14 +17,11 @@ namespace BulkyWeb.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            CouponVM = new() {
-                ApplicationUser = _unitOfWork.ApplicationUser.GetAll().ToList(),
-                Coupon =new() 
-            };
+            List<Coupon> coupon = _unitOfWork.Coupon.GetAll().ToList();
 
-            return View(CouponVM);
+            return View(coupon);
         }
-        public IActionResult AddCoupon(string userid)
+        public IActionResult AddCoupon()
         {
             return View();
         }
@@ -39,6 +36,39 @@ namespace BulkyWeb.Areas.Admin.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-
+        public IActionResult Edit(int id)
+        {
+           Coupon coupon = _unitOfWork.Coupon.Get(u=>u.Id == id);
+            return View(coupon);
+        }
+        [HttpPost]
+        public IActionResult Edit(Coupon coupon)
+        {
+           if (coupon != null)
+            {
+                _unitOfWork.Coupon.Update(coupon);
+                _unitOfWork.Save();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(coupon);
+        }
+        public IActionResult Delete(int id)
+        {
+            Coupon coupon = _unitOfWork.Coupon.Get(u=>u.Id == id);
+            return View(coupon);
+        }
+        [HttpPost]
+        public IActionResult Delete(Coupon coupon)
+        {
+            if (coupon == null)
+            {
+                NotFound();
+            }
+            _unitOfWork.Coupon.Remove(coupon);
+            _unitOfWork.Save();
+            return RedirectToAction(nameof(Index));
+        }
+        
+            
     }
 }

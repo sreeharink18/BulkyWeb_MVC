@@ -18,9 +18,8 @@ namespace BulkyWeb.Areas.Customer.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            List<Coupon> coupon = _unitOfWork.Coupon.GetAll(u=>u.ApplicationUserId == UserId).ToList();
+          
+            List<Coupon> coupon = _unitOfWork.Coupon.GetAll().ToList();
             return View(coupon);
         }
     }
