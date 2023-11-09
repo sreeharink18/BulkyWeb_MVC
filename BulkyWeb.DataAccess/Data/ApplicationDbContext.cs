@@ -21,6 +21,8 @@ namespace BulkyWeb.DataAccess.Data
         public DbSet<OrderHeader> orderHeader { get; set; }
 		public DbSet<MultipleAddress> MultipleAddresses { get; set; }
         public DbSet<Coupon> coupons { get; set; }
+        public DbSet<SalesReport> SalesReports { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -21,6 +21,7 @@ namespace BulkyWeb.DataAccess.Repository
         public IOrderDetailRepository OrderDetail { get; private set; }
         public IAddMultipleAddressRepository AddMultipleAddressess { get; private set; }
         public ICouponRepository Coupon { get; private set; }
+        public ISalesReportRepository SalesReport { get; private set; }
 
         public UnitOfWork(ApplicationDbContext db)
         {
@@ -34,6 +35,7 @@ namespace BulkyWeb.DataAccess.Repository
             OrderDetail =new OrderDetailRepository(_context);
             AddMultipleAddressess =new AddMultipleAddressRepository(_context);
             Coupon =new CouponRepository(_context);
+            SalesReport =new SalesReportRepository(_context);
         }
         public void Save()
         {
