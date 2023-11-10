@@ -230,6 +230,29 @@ namespace BulkyWeb.Areas.Admin.Controllers
             
             return View(OrderHeaderId);
         }
+        public IActionResult Invoice(int orderId)
+        {
+            double orginaltotalAmount = 0;
+            OrderHeader order = _unitOfWork.OrderHeader.Get(u=>u.Id == orderId);
+            ApplicationUser user = _unitOfWork.ApplicationUser.Get(u => u.Id == order.ApplicationUserId);
+            Models.Coupon coupon = _unitOfWork.Coupon.Get(u => u.CouponCode == order.CouponCode);
+            List<OrderDetail> OrderDetails = _unitOfWork.OrderDetail.GetAll(u => u.OrderId == orderId, includeProperties: "Product").ToList();
+            foreach (OrderDetail detail in OrderDetails)
+            {
+                orginaltotalAmount += (detail.Price * detail.Count);
+            }
+
+           
+            OrderVM orderVM = new()
+            {
+                OrderHeader = order,
+                User = user,
+                Coupon = coupon,
+                OrderDetails = _unitOfWork.OrderDetail.GetAll(u => u.OrderId == orderId, includeProperties: "Product"),
+                OrginalTotalAmount = orginaltotalAmount,
+            };
+            return View(orderVM);
+        }
         #region Api Call
         [HttpGet]
 		public IActionResult Get(string status)

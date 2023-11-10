@@ -26,6 +26,11 @@ function loadDataTable(status) {
         $('#orderData').DataTable().destroy();
     }
     dataTable = $('#orderData').DataTable({
+            dom: 'Bfrtip',
+        buttons: [
+            'excelHtml5',
+            'pdfHtml5'
+        ],
         "ajax": { url: '/admin/order/get?status=' + status },
         "columns": [
             { data: 'id',"width" :"5%" },

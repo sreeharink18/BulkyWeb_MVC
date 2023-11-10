@@ -265,10 +265,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
                 if (applicationUser.CompanyId.GetValueOrDefault() == 0)
 				{
-
                     decimal totalAmount=(decimal)ShoppingCartVM.OrderHeader.OrderTotal;
-
-
 
 					if (!string.IsNullOrEmpty(ShoppingCartVM.OrderHeader.CouponCode))
                     {

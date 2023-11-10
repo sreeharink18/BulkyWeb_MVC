@@ -18,7 +18,9 @@ namespace BulkyWeb.Models.ViewModel
 
         public double OrderTotalAmount { get; set; }
         public double MonthlyRevenue { get; set; }
-
+        
+        public int UserCount { get; set; }
         public int ProductCount { get; set; }
+       public List<SalesReport> SalesReport { get; set; }
     }
 }

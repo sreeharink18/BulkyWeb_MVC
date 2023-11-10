@@ -11,5 +11,8 @@ namespace BulkyWeb.Models.ViewModel
 		public OrderHeader OrderHeader { get; set; }
 		public Coupon Coupon { get; set; }
 		public IEnumerable<OrderDetail> OrderDetails { get; set; }
+		public ApplicationUser User { get; set; }
+
+		public double OrginalTotalAmount { get; set; }
 	}
 }

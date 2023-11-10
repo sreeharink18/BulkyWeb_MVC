@@ -22,6 +22,8 @@
     <title></title>
 </head>
 
+<body>
+
 
 <div>
     <div style='height:100px'>
@@ -53,7 +55,7 @@
                                 <a class="text-decoration-none text-dark" href="products">
                                     <div class="card my-card shadow text-center p-3">
                                         <h4>Users<i class="fas fa-users"></i></h4>
-                                        <h3>{{total_users_count}}</h3>
+                                        <h3>@Model.UserCount</h3>
                                     </div>
                                 </a>
                             </div>
@@ -61,7 +63,7 @@
                                 <a class="text-decoration-none text-dark" href="productmanagement">
                                     <div class="card my-card shadow text-center p-3">
                                         <h4>Products <i class="fas fa-box"></i></h4>
-                                        <h3>{{product_count}}</h3>
+                                        <h3>@Model.ProductCount</h3>
                                     </div>
                                 </a>
                             </div>
@@ -69,7 +71,7 @@
                                 <a class="text-decoration-none text-dark" href="order_list">
                                     <div class="card my-card shadow text-center p-3">
                                         <h4>Orders <i class="fas fa-shipping-fast"></i></h4>
-                                        <h3>{{order}}</h3>
+                                        <h3>@Model.OrdersCount</h3>
                                     </div>
                                 </a>
                             </div>
@@ -92,13 +94,16 @@
                     <canvas id="myChart1"></canvas>
                     <script>
                         var ctx = document.getElementById('myChart1').getContext('2d');
+                         var productNames = @Html.Raw(Json.Serialize(Model.Product.Select(v => v.Title)));
+                          var totalCounts = @Html.Raw(Json.Serialize(Model.Product.Select(v => v.TotalBooktCount)));
                         var myChart1 = new Chart(ctx, {
                             type: 'pie',
                             data: {
-                               labels: [@Html.Raw(Json.Serialize(Model.Product.Select(v => v.Title)))],
+                                
+                                labels:productNames,
                                 datasets: [{
                                     label: 'Products',
-                                    data: [@Html.Raw(Json.Serialize(Model.Product.Select(v => v.TotalBooktCount)))],
+                                    data:totalCounts ,
                                     backgroundColor: [
                                         'rgba(255, 99, 132, 1)',
                                         'rgba(54, 162, 235, 1)',
@@ -213,16 +218,18 @@
             <div class="col-md-12" style="margin-bottom: 110px; margin-top: 20px;">
                 <div class="bg-white">
                     <canvas id="myChart2"></canvas>
-                    <script>
-                        var ctx2 = document.getElementById('myChart2').getContext('2d');
-                        var myChart2 = new Chart(ctx2, {
-                            type: 'bar',
-                            data: {
-                                labels: [@Html.Raw(Json.Serialize(Model.ProductCount))],
-                                datasets: [{
-                                    label: 'Sales by Month',
-                                    data: [@Html.Raw(Json.Serialize(Model.OrderTotalAmount))],
-                                    backgroundColor: [
+                  <script>
+                    var ctx2 = document.getElementById('myChart2').getContext('2d');
+                    var months = [@Html.Raw(Json.Serialize(Model.SalesReport.Select(sr => sr.Month?.ToString("MMMM") ?? "")))];
+                    var totalamount = [@Html.Raw(Json.Serialize(Model.SalesReport.Select(sr => sr.TotalAmount)))];
+                    var myChart2 = new Chart(ctx2, {
+                        type: 'bar',
+                        data: {
+                            labels: months,
+                            datasets: [{
+                                label: 'Sales by Month',
+                                data: totalamount,
+                               backgroundColor: [
                                         'rgba(255, 99, 132, 1)',
                                         'rgba(54, 162, 235, 1)',
                                         'rgba(255, 206, 86, 1)',
@@ -318,25 +325,25 @@
                                         'rgba(705, 2, 492, 1)',
                                         'rgba(103, 602, 55, 1)',
                                     ],
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
                                 }
                             }
-                        });
-                    </script>
+                        }
+                    });
+                </script>
                 </div>
             </div>
         </div>
     </div>
 
 </div>
-
+</body>
 <!--End Graphs-->
 <!-- Optional JavaScript; choose one of the two! -->
 <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->

@@ -127,7 +127,9 @@
 								<span>Free</span>
 								</li>
 								<li class="list-group-item d-flex justify-content-between align-items-center">
+									
 									<input id="couponInput" asp-for="OrderHeader.CouponCode" class="form-control" aria-required="true" placeholder="Coupon" />
+									<input asp-for="OrderHeader.CouponId" hidden/>
 									<a id="applyCouponButton" class="eyebrow underline action btn btn-primary">Check</a>
 								</li>
 								<li class="list-group-item d-flex justify-content-between align-items-center">

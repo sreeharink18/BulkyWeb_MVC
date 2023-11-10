@@ -307,6 +307,10 @@
                                     <button asp-action="OrderReturnConfirmation" type="submit" class="btn btn-danger form-control my-1">Return Order Confirmation</button>
                                 }
                             }
+                            <a class="btn btn-info form-control btn-sm mt-5" asp-action="Invoice" asp-route-orderId="@Model.OrderHeader.Id">
+                                <i class="bi bi-receipt-cutoff text-bg-primary"></i> InVoice
+                            </a>
+                             
                         </div>
                     </div>
                 </div>
