@@ -1,6 +1,7 @@
 ﻿using BulkyWeb.DataAccess.Repository.IRepository;
 using BulkyWeb.Models;
 using BulkyWeb.Models.ViewModel;
+using BulkyWeb.Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BulkyWeb.Areas.Admin.Controllers
@@ -31,6 +32,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
         {
             if(coupon != null)
             {
+                coupon.IsValid = SD.CouponValid;
                 _unitOfWork.Coupon.Add(coupon);
                 _unitOfWork.Save();
             }

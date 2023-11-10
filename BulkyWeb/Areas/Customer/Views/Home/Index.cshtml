@@ -29,34 +29,27 @@
                                     </span>
                                 </p>
                             </div>
-                            @if (product.TotalBooktCount < 102)
+                        </div>
+                        <div>
+                            @if (product.TotalBooktCount <=0 )
                             {
                                 <div class="pl-1">
                                     <p class="text-dark text-opacity-75 text-center">
 
                                         <span class="text-danger fw-bold">
-                                            Only few more left
-                                        </span>
-                                    </p>
-                                </div>
-                            }  else if (product.TotalBooktCount <= 0)
-                            {
-                                <div class="pl-1">
-                                    <p class="text-dark text-opacity-75 text-center">
-
-                                        <span class="text-danger fw-bold">
-                                            Out of Stock
+                                           Out of Stock
                                         </span>
                                     </p>
                                 </div>
                             }
+                            else
+                            {
+                                <a asp-action="Details" asp-route-productId="@product.Id"
+                                   class="btn btn-primary bg-gradient border-0 form-control">
+                                    Details
+                                </a>
+                            }
                            
-                        </div>
-                        <div>
-                            <a asp-action="Details" asp-route-productId="@product.Id"                        
-                               class="btn btn-primary bg-gradient border-0 form-control">
-                                Details
-                            </a>
                         </div>
                     </div>
                 </div>

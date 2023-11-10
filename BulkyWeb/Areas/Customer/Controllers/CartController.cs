@@ -23,6 +23,8 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
 		private IUnitOfWork _unitOfWork;
         public static bool WalletChecked { get; set; }
+        public static bool CouponChecked { get; set; }
+        public static double CouponDiscountAmount { get; set; }
         public CartController(IUnitOfWork unitOfWork) { 
             _unitOfWork = unitOfWork;
         }
@@ -44,43 +46,6 @@ namespace BulkyWeb.Areas.Customer.Controllers
             }
             return View(ShoppingCartVM);
         }
-      /*  [HttpPost]
-        public IActionResult Index(ShoppingCartVM shoppingCartVM)
-        {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            ShoppingCartVM = new()
-            {
-                shoppingCartsList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == UserId, includeProperties: "Product"),
-                OrderHeader = new(),
-                CouponList=_unitOfWork.Coupon.GetAll().ToList(),
-
-            };
-
-            foreach (var cart in ShoppingCartVM.shoppingCartsList)
-            {
-                cart.Price = GetPriceBasedOnQuantity(cart);
-                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
-            }
-			couponcode = _unitOfWork.Coupon.Get(u=>u.CouponCode == shoppingCartVM.OrderHeader.CouponCode);
-            if(couponcode != null)
-            {
-                flag = 1;
-				Ordertotal = (int)ShoppingCartVM.OrderHeader.OrderTotal;
-				if (Ordertotal >= couponcode.MinAmout)
-                {
-					Ordertotal = Ordertotal - couponcode.DiscountAmout;
-                }
-                ShoppingCartVM.OrderHeader.OrderTotal = Ordertotal;
-                ShoppingCartVM.OrderHeader.CouponCode = couponcode.CouponCode;
-                *//*_unitOfWork.OrderHeader.Update(shoppingCartVM.OrderHeader);
-                _unitOfWork.Save();
-*//*
-            }
-            
-            return View(ShoppingCartVM);
-        }*/
-       
 		public IActionResult CheckOutCoupon(ShoppingCartVM shoppingCartVM)
 		{
 			var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -274,6 +239,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
                         if(coupon != null)
                         {
                             ShoppingCartVM.OrderHeader.OrderTotal = (double)totalAmount;
+                            coupon.IsValid = SD.CouponInValid;
                         }
 					}
                     if (WalletChecked)
@@ -449,37 +415,57 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
             if(couponobj != null)
             {
-                if(couponobj.DiscountAmout < OrderTotal)
+                if (couponobj.IsValid == SD.CouponInValid)
                 {
-                    decimal discountPrice = (decimal)couponobj.DiscountAmout;
-                    decimal cartTotal = (decimal)OrderTotal;
-                    if(couponobj.DiscountAmout > 0)
+                    TempData["error"] = "The Coupon is Invalid.";
+                    var responce = new
                     {
-                        discountPrice = cartTotal-couponobj.DiscountAmout;
-                    }
-                    else
-                    {
-						discountPrice = (decimal)(cartTotal - (cartTotal) * (couponobj.DiscountAmout / 100));
-					}
-                    decimal newTotal = (decimal)(OrderTotal - discountPrice);
-                    
-                    var responce = new {
-                        success = true,
-						discountPrice,
-						newTotal
-					};
+                        success = false,
+                        errorMessage = "The Coupon is Invalid."
+
+                    };
                     return Json(responce);
                 }
                 else
                 {
-					TempData["error"] = "Order total is below the minimum purchase amount.";
-                    var responce = new {
-                        success= false,
-                        errorMessage = "Order total is below the minimum purchase amount."
-				
-				    };
-                    return Json(responce);
-                }
+					if (couponobj.DiscountAmout < OrderTotal)
+					{
+						decimal discountPrice = (decimal)couponobj.DiscountAmout;
+						decimal cartTotal = (decimal)OrderTotal;
+						if (couponobj.DiscountAmout > 0)
+						{
+							discountPrice = cartTotal - couponobj.DiscountAmout;
+						}
+						else
+						{
+							discountPrice = (decimal)(cartTotal - (cartTotal) * (couponobj.DiscountAmout / 100));
+						}
+						decimal newTotal = (decimal)(OrderTotal - discountPrice);
+
+						var responce = new
+						{
+							success = true,
+							discountPrice,
+							newTotal
+						};
+                        CouponChecked = true;
+                        CouponDiscountAmount = (double)newTotal;
+						return Json(responce);
+					}
+
+					else
+					{
+						TempData["error"] = "Order total is below the minimum purchase amount.";
+						var responce = new
+						{
+							success = false,
+							errorMessage = "Order total is below the minimum purchase amount."
+
+						};
+						return Json(responce);
+					}
+				}
+                   
             }
 			TempData["error"] = "Coupon not found.";
 			var responsed = new
@@ -517,13 +503,18 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
 			if (userobj.Wallet > totalAmount - 40)
             {
-                var newwalletAmount = userobj.Wallet - totalAmount - 40;
+                if (CouponChecked)
+                {
+                    totalAmount -= (int)CouponDiscountAmount;
+                }
+                var newwalletAmount = userobj.Wallet - (totalAmount - 40);
                  message = "If we pay a minimum amount of 40 in online payment";
+
 				var response = new
 				{
 					success =true,
                     newWalletAmount = newwalletAmount,
-					Message= message,
+					message= message,
 
 				};
 				WalletChecked = true;
@@ -536,7 +527,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
 				{
 					success = false,
 					newWalletAmount = (int)totalAmount,
-					Message = "The Wallet have enough Amount"
+					message = "The Wallet have enough Amount"
 
 				};
 				
@@ -547,35 +538,18 @@ namespace BulkyWeb.Areas.Customer.Controllers
 		public IActionResult IsNotCheckWallet(int? totalAmount, string? userId)
 		{
 			var userobj = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
-
+			WalletChecked = false;
 			string message = "";
-
-			if (userobj.Wallet > totalAmount - 40)
+			var response = new
 			{
-
-				var newwalletAmount = userobj.Wallet - totalAmount - 40;
-				message = "If we pay a minimum amount of 40 in online payment";
-				var response = new
-				{
-					success = true,
+				success = true,
+                message = message,
 				
+			};
 
-				};
-                WalletChecked = false;
-				return Json(response);
+			return Json(response);
 
-			}
-			else
-			{
-				var response = new
-				{
-					success = false,
-					newWalletAmount = (int)totalAmount,
-					Message = "The Wallet have enough Amount"
-
-				};
-				return Json(response);
-			}
+			
 
 		}
 

@@ -119,6 +119,10 @@ namespace BulkyWeb.Areas.Customer.Controllers
             {
                 userobj.Wallet = 0;
             }
+            if(userobj.Wallet <= 0)
+            {
+                userobj.Wallet = 0;
+            }
             return View(userobj);
         }
         [HttpPost]
@@ -219,6 +223,10 @@ namespace BulkyWeb.Areas.Customer.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        public IActionResult RatingReview()
+        {
+            return View();
         }
     }
 }

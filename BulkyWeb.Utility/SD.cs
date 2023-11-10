@@ -31,5 +31,8 @@
 
         public const string sessionCart = "SessionShoppingCart";
 
+        public const string CouponValid = "valid";
+        public const string CouponInValid = "Invalid";
+
     }
 }
