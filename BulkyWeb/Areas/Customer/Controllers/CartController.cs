@@ -240,6 +240,8 @@ namespace BulkyWeb.Areas.Customer.Controllers
                         {
                             ShoppingCartVM.OrderHeader.OrderTotal = (double)totalAmount;
                             coupon.IsValid = SD.CouponInValid;
+                            _unitOfWork.Coupon.Update(coupon);
+                            _unitOfWork.Save();
                         }
 					}
                     if (WalletChecked)
