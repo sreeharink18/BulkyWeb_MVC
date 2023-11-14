@@ -71,22 +71,6 @@
                         <div class="row pl-2 mt-3">
                             <p class="text-secondary lh-sm">@Html.Raw(Model.Product.Description)</p>
                         </div>
-                       @*  <div class="center-xy mb-2">
-                            <a class=" btn btn-info" asp-action="RatingReview"> Rating & Review </a>
-                        </div> *@
-                       @*  <div class="row pl-2 mb-3">
-                            <div class="col-md-4">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text bg-primary text-white border-0 fw-semibold"
-                                          id="inputGroup-sizing-default" asp-validation-for="Count">
-                                        Count
-                                    </span>
-                                    <input asp-for="Count" type="number" value="1" class="form-control text-end"
-                                           aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" />
-
-                                </div>
-                            </div>
-                        </div> *@
                         @if (Model.Product.TotalBooktCount<102)
                         {
                             <div class="row text-center mb-3">
@@ -103,7 +87,21 @@
                                 </div>
                             </div>
                         }
-
+                        @if(Model.Product.DiscountAmount != 0 && Model.Product.DiscountAmount !=null)
+                        {
+                            <div class="row text-center mb-3">
+                                <div class="col-12 col-md-6 pb-1">
+                                    <h5 class="text-bg-warning  fw-bold ">@Model.Product.DiscountAmount % off</h5>
+                                    <span class="text-bg-primary  fw-bold ">Discount Amount: &#x20b9; @ViewBag.DiscountAmount</span>
+                                </div>
+                            </div>
+                            <div class="row text-center mb-3">
+                                <div class="col-12 col-md-6 pb-1">
+                                   
+                                </div>
+                            </div>
+                        }
+                      
                         <input asp-for="Count" type="hidden" value="1" />
                         <div class="row">
                             <div class="col-12 col-md-6 pb-1">

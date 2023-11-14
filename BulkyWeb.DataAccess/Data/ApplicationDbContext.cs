@@ -29,9 +29,9 @@ namespace BulkyWeb.DataAccess.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Category>().HasData(
-                new Category { Id = 1, Name = "Action", DisplayOrder = 1,List=false,CountCategory=1 },
-                new Category { Id = 2, Name = "SciFi", DisplayOrder = 2, List = false, CountCategory = 2 },
-                new Category { Id = 3, Name = "History", DisplayOrder = 3, List = false, CountCategory = 3 }
+                new Category { Id = 1, Name = "Action", DisplayOrder = 1,List=false,CountCategory=1, IsDiscount = "null", DiscountAmount = 0 },
+                new Category { Id = 2, Name = "SciFi", DisplayOrder = 2, List = false, CountCategory = 2, IsDiscount = "null", DiscountAmount = 0 },
+                new Category { Id = 3, Name = "History", DisplayOrder = 3, List = false, CountCategory = 3 ,IsDiscount ="null" , DiscountAmount=20}
                 );
             modelBuilder.Entity<Product>().HasData(
             new Product

@@ -34,5 +34,8 @@
         public const string CouponValid = "valid";
         public const string CouponInValid = "Invalid";
 
+        public const string IsValid = "valid";
+        public const string IsInValid = "Invalid";
+
     }
 }

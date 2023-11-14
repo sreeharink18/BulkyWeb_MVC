@@ -4,6 +4,7 @@ using BulkyWeb.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BulkyWeb.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231113074556_updateproductDiscount")]
+    partial class updateproductDiscount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,15 +36,8 @@ namespace BulkyWeb.DataAccess.Migrations
                     b.Property<int>("CountCategory")
                         .HasColumnType("int");
 
-                    b.Property<int>("DiscountAmount")
-                        .HasColumnType("int");
-
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int");
-
-                    b.Property<string>("IsDiscount")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("List")
                         .HasColumnType("bit");
@@ -60,9 +56,7 @@ namespace BulkyWeb.DataAccess.Migrations
                         {
                             Id = 1,
                             CountCategory = 1,
-                            DiscountAmount = 0,
                             DisplayOrder = 1,
-                            IsDiscount = "null",
                             List = false,
                             Name = "Action"
                         },
@@ -70,9 +64,7 @@ namespace BulkyWeb.DataAccess.Migrations
                         {
                             Id = 2,
                             CountCategory = 2,
-                            DiscountAmount = 0,
                             DisplayOrder = 2,
-                            IsDiscount = "null",
                             List = false,
                             Name = "SciFi"
                         },
@@ -80,9 +72,7 @@ namespace BulkyWeb.DataAccess.Migrations
                         {
                             Id = 3,
                             CountCategory = 3,
-                            DiscountAmount = 20,
                             DisplayOrder = 3,
-                            IsDiscount = "null",
                             List = false,
                             Name = "History"
                         });

@@ -8,6 +8,7 @@ using BulkyWeb.Utility;
 using Stripe.Checkout;
 using Stripe;
 using Azure;
+using Stripe.Issuing;
 
 namespace BulkyWeb.Areas.Customer.Controllers
 {
@@ -394,6 +395,11 @@ namespace BulkyWeb.Areas.Customer.Controllers
         }
         private double GetPriceBasedOnQuantity(ShoppingCart shoppingCart)
         {
+            if(shoppingCart.Product.IsDiscountProduct == SD.IsValid)
+            {
+                int discountAmount = (int)shoppingCart.Product.Price * (100 - (int)shoppingCart.Product.DiscountAmount) / 100;
+                return discountAmount;
+            }
             if(shoppingCart.Count <= 50)
             {
                 return shoppingCart.Product.Price;
@@ -437,10 +443,13 @@ namespace BulkyWeb.Areas.Customer.Controllers
 						if (couponobj.DiscountAmout > 0)
 						{
 							discountPrice = cartTotal - couponobj.DiscountAmout;
+							
 						}
 						else
 						{
-							discountPrice = (decimal)(cartTotal - (cartTotal) * (couponobj.DiscountAmout / 100));
+						    int discountPositive = Math.Abs(couponobj.DiscountAmout);	
+							discountPrice = (decimal)(cartTotal * (100 - discountPositive) / 100);
+						/*	discountPrice = (decimal)(cartTotal - (cartTotal) * (couponobj.DiscountAmout / 100));*/
 						}
 						decimal newTotal = (decimal)(OrderTotal - discountPrice);
 

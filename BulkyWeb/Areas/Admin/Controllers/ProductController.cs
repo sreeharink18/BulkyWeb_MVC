@@ -93,6 +93,15 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 }
                 else
                 {
+                    if (productVm.Product.DiscountAmount != 0 && productVm.Product.DiscountAmount != null && productVm.Product.DiscountAmount != 1)
+                    {
+                        productVm.Product.IsDiscountProduct = "valid";
+
+                    }
+                    else
+                    {
+                        productVm.Product.IsDiscountProduct = "Invalid";
+                    }
                     _unitOfWork.Product.Update(productVm.Product);
                     TempData["success"] = "Product Updated Successfully";
                 }

@@ -62,6 +62,25 @@
                             <label asp-for="Product.TotalBooktCount" class="ms-2"></label>
                             <span asp-validation-for="Product.TotalBooktCount" class="text-danger"></span>
                         </div>
+                        <label>Discount Amount</label>
+                        <div class="form-floating py-2 col-12">
+
+                            <div>
+                                <input type="radio" asp-for="Product.IsDiscountProduct" name="IsDiscountProduct" value="valid" id="checkTrue" />
+                                <label class="ms-2">Valid</label>
+                            </div>
+                            <div>
+                                <input type="radio" asp-for="Product.IsDiscountProduct" name="IsDiscountProduct" value="Invalid" id="checkFalse"  />
+                                <label class="ms-2">InValid</label>
+                            </div>
+
+                            <span asp-validation-for="Product.IsDiscountProduct" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12" id="discountAmountDiv" style="display:none">
+                            <input id="discountAmountInput" asp-for="Product.DiscountAmount" class="form-control border-0 shadow" />
+                            <label asp-for="Product.DiscountAmount" class="ms-2"></label>
+                            <span asp-validation-for="Product.DiscountAmount" class="text-danger"></span>
+                        </div>
                         <div class="form-floating py-2 col-12">
                             @* Using ViewBag *@
                             @*  <select asp-for="CategoryId" asp-items="ViewBag.CategoryList" class="form-select border-0 shadow">
@@ -121,7 +140,26 @@
                 toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
             });
         </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var trueRadioTrue = document.getElementById('checkTrue');
+                var trueRadioFalse = document.getElementById('checkFalse');
+                var discountAmountDiv = document.getElementById('discountAmountDiv');
+
+                trueRadioTrue.addEventListener('change', function () {
+                discountAmountDiv.style.display = trueRadioTrue.checked ? 'block' : 'none';
+                });
+                trueRadioFalse.addEventListener('change', function () {
+                if (checkFalse.checked) {
+             
+                    discountAmountInput.value = 1;
+                }
+                discountAmountDiv.style.display = trueRadioFalse.checked ? 'none':'block' ;
+                });
+
+            });
+        </script>
     @{
-        <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
     }
 }
