@@ -177,12 +177,20 @@ namespace BulkyWeb.Areas.Customer.Controllers
                     }
                 }
             }
-            //Its is COD 
-            if (ShoppingCartVM.OrderHeader.PaymentMethod == SD.PaymentMethodCOD.ToString())
+			if (CouponChecked)
+			{
+				ShoppingCartVM.OrderHeader.OrderTotal = CouponDiscountAmount;
+
+			}
+
+			//Its is COD 
+			if (ShoppingCartVM.OrderHeader.PaymentMethod == SD.PaymentMethodCOD.ToString())
             {
                 ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentMethodCODPending;
-                ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusApproved;          
-                _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
+                ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusApproved;
+                //checking Coupon
+			
+				_unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
                 _unitOfWork.Save();
                 foreach (var cart in ShoppingCartVM.shoppingCartsList)
                 {
@@ -460,7 +468,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
 							newTotal
 						};
                         CouponChecked = true;
-                        CouponDiscountAmount = (double)newTotal;
+                        CouponDiscountAmount = (double)discountPrice;
 						return Json(responce);
 					}
 
