@@ -403,11 +403,32 @@ namespace BulkyWeb.Areas.Customer.Controllers
         }
         private double GetPriceBasedOnQuantity(ShoppingCart shoppingCart)
         {
-            if(shoppingCart.Product.IsDiscountProduct == SD.IsValid)
-            {
-                int discountAmount = (int)shoppingCart.Product.Price * (100 - (int)shoppingCart.Product.DiscountAmount) / 100;
-                return discountAmount;
-            }
+
+            var categories = _unitOfWork.Category.Get(u => u.Id == shoppingCart.Product.CategoryId);
+                int discountAmount = 0;
+                if (shoppingCart.Product.IsDiscountProduct == SD.IsValid && categories.IsDiscount == SD.IsValid)
+                {
+                    discountAmount = (int)shoppingCart.Product.Price * (100 - (int)categories.DiscountAmount) / 100;
+                    discountAmount = (int)discountAmount * (100 - (int)shoppingCart.Product.DiscountAmount) / 100;
+                    return discountAmount;
+                }
+                else
+                {
+                    if (categories.IsDiscount == SD.IsValid)
+                    {
+                        discountAmount = (int)shoppingCart.Product.Price * (100 - (int)categories.DiscountAmount) / 100;
+                        return discountAmount;
+                    }
+
+                    if (shoppingCart.Product.IsDiscountProduct == SD.IsValid)
+                    {
+                        discountAmount = (int)shoppingCart.Product.Price * (100 - (int)shoppingCart.Product.DiscountAmount) / 100;
+                        return discountAmount;
+                    }
+                }
+
+
+            
             if(shoppingCart.Count <= 50)
             {
                 return shoppingCart.Product.Price;

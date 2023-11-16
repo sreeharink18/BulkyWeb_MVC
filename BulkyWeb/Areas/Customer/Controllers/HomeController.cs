@@ -38,12 +38,33 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 ProductId = productId,
 
             };
-            if(cart.Product.IsDiscountProduct == SD.IsValid)
+            int discountAmount;
+            if(cart.Product.category.IsDiscount == SD.IsValid || cart.Product.IsDiscountProduct == SD.IsValid)
             {
-                int discountAmount = (int)cart.Product.Price  *( 100-(int)cart.Product.DiscountAmount)/100;
-              ViewBag.DiscountAmount = discountAmount;
-            
+                if (cart.Product.IsDiscountProduct == SD.IsValid && cart.Product.category.IsDiscount == SD.IsValid)
+                {
+                    discountAmount = (int)cart.Product.Price * (100 - (int)cart.Product.category.DiscountAmount) / 100;
+                    discountAmount = (int)discountAmount * (100 - (int)cart.Product.DiscountAmount) / 100;
+                    ViewBag.DiscountAmount = discountAmount;
+                }
+                else
+                {
+                    if (cart.Product.category.IsDiscount == SD.IsValid)
+                    {
+                        discountAmount = (int)cart.Product.Price * (100 - (int)cart.Product.category.DiscountAmount) / 100;
+                        ViewBag.DiscountAmount = discountAmount;
+                    }
+
+                    if (cart.Product.IsDiscountProduct == SD.IsValid)
+                    {
+                        discountAmount = (int)cart.Product.Price * (100 - (int)cart.Product.DiscountAmount) / 100;
+                        ViewBag.DiscountAmount = discountAmount;
+                    }
+                }
+              
+                
             }
+           
             return View(cart);
         }
         [HttpPost]

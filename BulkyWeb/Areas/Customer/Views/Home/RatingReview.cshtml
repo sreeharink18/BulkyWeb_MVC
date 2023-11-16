@@ -3,9 +3,64 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
-    .rating {
+    .stars input {
+    position: absolute;
+    left: -999999px;
+}
+
+.stars a {
+    display: inline-block;
+    font-size: 0;
+    text-decoration: none;
+}
+
+.stars a:before {
+    position: relative;
+    font-size: 18px;
+    font-family: 'FontAwesome', serif;
+    display: block;
+    content: "\f005";
+    color: #9e9e9e;
+}
+
+.stars a:hover:before,
+.stars a:hover ~ a:before,
+.stars a.active:before,
+.stars a.active ~ a:before {
+    color: blue;
+}
+
+    .stars input {
+        position: absolute;
+        left: -999999px;
+    }
+
+    .stars a {
+        display: inline-block;
+        font-size: 0;
+        text-decoration: none;
+    }
+
+        .stars a:before {
+            position: relative;
+            font-size: 18px;
+            font-family: 'FontAwesome', serif;
+            display: block;
+            content: "\f005";
+            color: #9e9e9e;
+        }
+
+        .stars a:hover:before,
+        .stars a:hover ~ a:before,
+        .stars a.active:before,
+        .stars a.active ~ a:before {
+            color: blue;
+        }
+
+   /*  .rating {
         list-style: none;
         padding: 0;
         margin: 0;
@@ -21,7 +76,7 @@
     .selected {
         color: gold; /* or any color you prefer for selected stars */
         text-shadow: 0 0 5px gold; /* adjust the shadow size as needed */
-    }
+    } */
 </style>
 <section style="background-color: #d94125;">
     <div class="container my-5 py-5 text-dark">
@@ -35,7 +90,16 @@
                                  height="65" />
                             <div class="w-100">
                                 <h5>Add a comment</h5>
-                                <ul class="rating mb-3" data-mdb-toggle="rating" id="starRating" >
+                                <p class="stars">
+                                    <span>
+                                        <a class="star-1" href="#">1</a>
+                                        <a class="star-2" href="#">2</a>
+                                        <a class="star-3" href="#">3</a>
+                                        <a class="star-4" href="#">4</a>
+                                        <a class="star-5" href="#">5</a>
+                                    </span>
+                                </p>
+                              @*   <ul class="rating mb-3" data-mdb-toggle="rating" id="starRating" >
                                     <li>
                                         <i class="far fa-star fa-sm text-danger" title="Bad"></i>
                                     </li>
@@ -51,7 +115,7 @@
                                     <li>
                                         <i class="far fa-star fa-sm text-danger" title="Excellent"></i>
                                     </li>
-                                </ul>
+                                </ul> *@
                                 <div class="form-outline">
                                     <textarea class="form-control" id="textAreaExample" rows="4"></textarea>
                                     <label class="form-label" for="textAreaExample">What is your view?</label>
@@ -76,9 +140,9 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
-            $("#starRating li").click(function () {
-                $(this).prevAll().addBack().toggleClass("selected");
-                $(this).nextAll().removeClass("selected");
+            $('.stars a').on('click', function () {
+                $('.stars a').removeClass('active');
+                $(this).addClass('active');
             });
         });
     </script>

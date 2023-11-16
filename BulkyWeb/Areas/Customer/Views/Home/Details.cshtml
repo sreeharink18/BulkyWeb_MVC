@@ -28,6 +28,14 @@
 
                         <div class="col-12 col-md-6 pb-4">
                             <span class="badge">@Model.Product.category.Name</span>
+                            <div>
+                                @if (Model.Product.category.IsDiscount == SD.IsValid)
+                                {
+                                    <h6 class="badge badge-soft-danger">Discount : @Model.Product.category.DiscountAmount %</h6>
+                                }
+                            </div>
+                            
+                            
                         </div>
                         <div class="row ps-2">
                             <h6 class="text-dark text-opacity-50 ">ISBN : @Model.Product.ISBN</h6>
@@ -87,7 +95,8 @@
                                 </div>
                             </div>
                         }
-                        @if(Model.Product.DiscountAmount != 0 && Model.Product.DiscountAmount !=null)
+                        @if (Model.Product.DiscountAmount != 0 && Model.Product.DiscountAmount != null && Model.Product.DiscountAmount != 1
+                             || Model.Product.category.IsDiscount ==SD.IsValid)
                         {
                             <div class="row text-center mb-3">
                                 <div class="col-12 col-md-6 pb-1">
@@ -101,7 +110,7 @@
                                 </div>
                             </div>
                         }
-                      
+                        <a asp-action="RatingReview" class="btn btn-info ms-5 mb-4">Rating & Review </a>
                         <input asp-for="Count" type="hidden" value="1" />
                         <div class="row">
                             <div class="col-12 col-md-6 pb-1">
