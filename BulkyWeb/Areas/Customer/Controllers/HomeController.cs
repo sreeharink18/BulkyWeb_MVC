@@ -17,6 +17,8 @@ namespace BulkyWeb.Areas.Customer.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private static int walletAmount;
+        [BindProperty]
+        public RatingReviewVM RatingReviewVM { get; set; }
         public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
@@ -250,9 +252,69 @@ namespace BulkyWeb.Areas.Customer.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        public IActionResult RatingReview()
+        [Authorize]
+        public IActionResult RatingReview(int productId)
+        {
+            RatingReviewVM = new()
+            {
+                ProductId = productId,
+                RatingReviewAll = _unitOfWork.RatingReview.GetAll(u => u.ProductId == productId, includeProperties: "Product").ToList(),
+                RatingReview =new() ,
+            };
+            
+          /*  List<RatingReview> ratingReview = _unitOfWork.RatingReview.GetAll(u=>u.ProductId == productId,includeProperties:"Product").ToList();
+            if(ratingReview.Count >0)
+            {
+                return View(ratingReview);
+            }*/
+            return View(RatingReviewVM);
+        }
+        [HttpPost]
+        [ActionName("RatingReview")]
+        public IActionResult RatingReviewPost(RatingReviewVM ratingReview)
         {
             return View();
+        }
+        public IActionResult RatingStarValue(int productId, int RatingValue)
+        {
+            var claimIdentity = (ClaimsIdentity)User.Identity;
+            var UserId = claimIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            try
+            {
+                RatingReview ratingRaviewObj = new() { 
+                    ProductId = productId,
+                    Rating = RatingValue,
+                    ApplicationUserId =UserId
+                };
+
+                IEnumerable<RatingReview> ratingReview = _unitOfWork.RatingReview.GetAll().ToList();
+                IEnumerable< RatingReview> ratingProduct = _unitOfWork.RatingReview.GetAll(u => u.ProductId == productId).ToList();
+                if(ratingProduct.Count()>=0)
+                {
+                    if (ratingProduct.Any())
+                    {
+                        RatingReview ratingUser = ratingProduct.FirstOrDefault(u => u.ApplicationUserId == UserId);
+                        if(ratingUser != null)
+                        {
+                            _unitOfWork.RatingReview.Update(ratingRaviewObj);
+                            _unitOfWork.Save();
+                            return RedirectToAction(nameof(RatingReview), new {RatingReviewVM});
+                        }
+                    }
+                    
+                    
+                }
+                
+                    _unitOfWork.RatingReview.Add(ratingRaviewObj);
+                    _unitOfWork.Save();
+                    return RedirectToAction(nameof(RatingReview), new { RatingReviewVM });
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("................."+ex.ToString());
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }
