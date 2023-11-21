@@ -1,8 +1,10 @@
 ﻿using BulkyWeb.DataAccess.Data;
 using BulkyWeb.DataAccess.Repository.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -26,26 +28,39 @@ namespace BulkyWeb.DataAccess.Repository
         }
         public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
         {
-            IQueryable<T> query;
-            if (tracked)
+            try
             {
-                 query = dbSet;
-               
-            }
-            else
-            {
-                query = dbSet.AsNoTracking();
-                
-            }
-            query = query.Where(filter);
-            if (!string.IsNullOrEmpty(includeProperties))
-            {
-                foreach (var incudeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                IQueryable<T> query;
+                if (tracked)
                 {
-                    query = query.Include(incudeProp);
+                    query = dbSet;
                 }
+                else
+                {
+                    query = dbSet.AsNoTracking();
+                }
+
+                query = query.Where(filter);
+
+                if (!string.IsNullOrEmpty(includeProperties))
+                {
+                    foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        query = query.Include(includeProp);
+                    }
+                }
+
+                return query.FirstOrDefault();
             }
-            return query.FirstOrDefault();
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                // You can rethrow the exception if you want to propagate it
+                // throw;
+
+                // Return a default value or handle the exception in another way
+                return default(T);
+            }
 
         }
 
@@ -53,20 +68,36 @@ namespace BulkyWeb.DataAccess.Repository
         public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter, string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;
-            if(filter != null)
+            if (filter != null)
             {
                 query = query.Where(filter);
             }
             if (!string.IsNullOrEmpty(includeProperties))
             {
-                foreach(var incudeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    query = query.Include(incudeProp);
+                    query = query.Include(includeProp);
                 }
             }
             return query.ToList();
-        }
+            try
+            {
+               
+            }
+            catch (DbException ex)
+            {
+                // Handle specific database exceptions
+                Console.WriteLine($"Database exception: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Handle other general exceptions
+                Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+            }
 
+            // Return an empty collection or throw the exception again based on your needs
+            return Enumerable.Empty<T>();
+        }
         public void Remove(T entity)
         {
            dbSet.Remove(entity);

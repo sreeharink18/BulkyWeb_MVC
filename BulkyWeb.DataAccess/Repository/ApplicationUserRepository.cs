@@ -28,8 +28,12 @@ namespace BulkyWeb.DataAccess.Repository
                 applicatiionUser.City   = obj.City;
                 applicatiionUser.State = obj.State;
                 applicatiionUser.PostCode = obj.PostCode;
-                applicatiionUser.Wallet = obj.Wallet;
+                if(obj.Wallet !=null)
+                {
+                    applicatiionUser.Wallet = obj.Wallet;
+                }
             }
+                
            
         }
     }

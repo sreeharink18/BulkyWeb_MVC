@@ -129,13 +129,12 @@ namespace BulkyWeb.Areas.Customer.Controllers
         [HttpPost]
         public IActionResult EditUserProfile(ApplicationUser applicationUser)
         {
-            if (ModelState.IsValid)
-            {
+         
                 _unitOfWork.ApplicationUser.Update(applicationUser);
                 _unitOfWork.Save();
                 return RedirectToAction(nameof(UserProfile));
-            }
-            return View();
+            
+           
         }
         public IActionResult Wallet()
         {
@@ -163,6 +162,10 @@ namespace BulkyWeb.Areas.Customer.Controllers
             var UserObj = _unitOfWork.ApplicationUser.Get(u=>u.Id == UserId);   
             if(UserObj != null)
             {
+                if(UserObj.Wallet == null)
+                {
+                    UserObj.Wallet = 0;
+                }
                 if(applicationUser.Wallet !=null)
                 {
                     if (applicationUser.Wallet <= 0 )
@@ -259,6 +262,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
             {
                 ProductId = productId,
                 RatingReviewAll = _unitOfWork.RatingReview.GetAll(u => u.ProductId == productId, includeProperties: "Product").ToList(),
+               
                 RatingReview =new() ,
             };
             
@@ -269,11 +273,36 @@ namespace BulkyWeb.Areas.Customer.Controllers
             }*/
             return View(RatingReviewVM);
         }
+
         [HttpPost]
-        [ActionName("RatingReview")]
-        public IActionResult RatingReviewPost(RatingReviewVM ratingReview)
+        public IActionResult RatingReview(RatingReviewVM ratingReviewVM)
         {
-            return View();
+            var claimIdentity = (ClaimsIdentity)User.Identity;
+            var UserId = claimIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if (ratingReviewVM == null)
+            {
+                return View();
+            }
+            ApplicationUser applicationUser =_unitOfWork.ApplicationUser.Get(u=>u.Id == UserId);
+            RatingReview ratingReview = new()
+            {
+                Rating = ratingReviewVM.RatingValue,
+                Review = ratingReviewVM.Review,
+                ProductId = ratingReviewVM.ProductId,
+                ApplicationUserId = UserId,
+                User = _unitOfWork.ApplicationUser.Get(u => u.Id == UserId , includeProperties: "ApplicationUser"),
+                Name=applicationUser.Name,
+                TimeStamp = DateTime.Now
+            };
+            _unitOfWork.RatingReview.Add(ratingReview);
+            _unitOfWork.Save();
+            RatingReviewVM = new()
+            {
+                ProductId = ratingReviewVM.ProductId,
+                RatingReviewAll = _unitOfWork.RatingReview.GetAll(u => u.ProductId == ratingReviewVM.ProductId, includeProperties: "Product").ToList(),
+                RatingReview = new(),
+            };
+            return RedirectToAction(nameof(RatingReview), new {ratingReview.ProductId});
         }
         public IActionResult RatingStarValue(int productId, int RatingValue)
         {

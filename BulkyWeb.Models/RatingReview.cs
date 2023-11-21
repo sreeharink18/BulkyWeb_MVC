@@ -19,12 +19,18 @@ namespace BulkyWeb.Models
         public Product?  Product { get; set; }
 
         public string? ApplicationUserId { get; set; }
-        [ForeignKey("ApplicationUserId")]
-        [ValidateNever]
-        public ApplicationUser? ApplicationUser { get; set; }
        
+        
+        [Required]
+        
         public string? Review { get; set; }
          
         public int? Rating { get; set; }
+
+        public DateTime? TimeStamp { get; set; }    
+
+        public ApplicationUser? User { get; set; }
+        public string? Name { get; set; }
+
     }
 }
