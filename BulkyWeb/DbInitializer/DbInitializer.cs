@@ -15,7 +15,7 @@ namespace BulkyWeb.DbInitializer
             UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager,
             ApplicationDbContext db) {
-            userManager = _userManager;
+            _userManager=userManager ;
             _roleManager = roleManager;
             _db = db;
         }
@@ -45,12 +45,12 @@ namespace BulkyWeb.DbInitializer
                 {
                     UserName = "adminLearnClub@gmail.com",
                     Email = "adminLearnClub@gmail.com",
-                    Name = "Sreehari Admin",
+                    Name = "MasterAdmin",
                     PhoneNumber = "1234567890",
                     StreetAddress = "123 street address",
                     State = "Kerala",
-                    City = "Thrissur",
-                    PostCode = "680568"
+                    PostCode = "680568",
+                    City = "Thrissur"
 
                 }, "Admin@123").GetAwaiter().GetResult();
                 ApplicationUser applicationUser = _db.ApplicationUsers.FirstOrDefault(u => u.Email == "adminLearnClub@gmail.com");

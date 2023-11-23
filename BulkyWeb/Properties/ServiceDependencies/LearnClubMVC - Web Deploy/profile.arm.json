@@ -21,7 +21,7 @@
     },
     "resourceName": {
       "type": "string",
-      "defaultValue": "LearnClub",
+      "defaultValue": "LearnClubMVC",
       "metadata": {
         "description": "Name of the main resource to be created by this template."
       }

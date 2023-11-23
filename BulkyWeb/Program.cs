@@ -63,10 +63,10 @@ StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey"
 app.UseRouting();
 app.UseSession();
 app.UseAuthentication();
-SeedDatabase();
 app.UseAuthorization();
+SeedDatabase();
 app.MapRazorPages();
-app.MapControllerRoute(
+app.MapControllerRoute( 
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
