@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BulkyWeb.Utility;
 using Stripe;
+using BulkyWeb.DbInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,9 +35,17 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
+builder.Services.AddAuthentication().AddFacebook(options =>
+{
+    options.AppId = "1022894538971007";
+    options.AppSecret = "e6c0e240f1bbf32d0029326b8fbd8ad7";
+
+});
 builder.Services.AddScoped<IEmailSender,EmailSender>(); 
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+
 
 var app = builder.Build();
 
@@ -54,6 +63,7 @@ StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey"
 app.UseRouting();
 app.UseSession();
 app.UseAuthentication();
+SeedDatabase();
 app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllerRoute(
@@ -61,3 +71,12 @@ app.MapControllerRoute(
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+void SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        dbInitializer.Initialize();
+    }
+}
