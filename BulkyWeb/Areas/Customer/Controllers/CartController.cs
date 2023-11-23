@@ -269,8 +269,8 @@ namespace BulkyWeb.Areas.Customer.Controllers
                         }
                     }
                     //stripe implementation regular customer   
-                    var domain = "https://localhost:7279/";
-					var options = new SessionCreateOptions
+                    var domain = Request.Scheme + "://" + Request.Host.Value + "/";
+                    var options = new SessionCreateOptions
 					{
 						SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",
 						CancelUrl = domain + "customer/cart/Index",
