@@ -1,0 +1,130 @@
+﻿@model ShoppingCart 
+
+<form method="post">
+    <input asp-for="ProductId" hidden />
+    <div class="card shadow border-0 mt-4 mb-4">
+        <div class="card-header bg-secondary bg-gradient text-light py-4">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h3 class="text-white text-uppercase">@Model.Product.Title</h3>
+                    <p class="text-white-50 fw-semibold mb-0">by @Model.Product.Author</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="py-3">
+                <div class="row">
+                    <div class="col-6 col-md-2 offset-lg-1 pb-1">
+                        <a asp-action="Index" class="btn btn-outline-primary bg-gradient mb-5 fw-semibold btn-sm text-uppercase">
+                            <small>Back to home</small>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-lg-3 offset-lg-1 text-center mb-3">
+                        <img src="@Model.Product.ImageUrl" width="100%" class="rounded" />
+                    </div>
+                    <div class="col-12 col-lg-6 offset-lg-1">
+
+                        <div class="col-12 col-md-6 pb-4">
+                            <span class="badge">@Model.Product.category.Name</span>
+                            <div>
+                                @if (Model.Product.category.IsDiscount == SD.IsValid)
+                                {
+                                    <h6 class="badge badge-soft-danger">Discount : @Model.Product.category.DiscountAmount %</h6>
+                                }
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="row ps-2">
+                            <h6 class="text-dark text-opacity-50 ">ISBN : @Model.Product.ISBN</h6>
+                        </div>
+                        <div class="row ps-2">
+                            <h6 class="text-dark text-opacity-50  pb-2">
+                                List Price: 
+                                <span class="text-decoration-line-through">
+                                    @Model.Product.ListPrice.ToString("c")
+                                </span>
+                            </h6>
+                        </div>
+                        <div class="row text-center ps-2">
+                            <div class="p-1 col-3 col-lg-2 bg-white border-bottom">
+                                <div class="text-dark text-opacity-50 fw-semibold">Quantity</div>
+                            </div>
+                            <div class="p-1 col-3 col-lg-2 bg-white border-bottom">
+                                <div class="text-dark text-opacity-50 fw-semibold">1-50</div>
+                            </div>
+                            <div class="p-1 col-3 col-lg-2 bg-white border-bottom">
+                                <div class="text-dark text-opacity-50 fw-semibold">51-100</div>
+                            </div>
+                            <div class="p-1 col-3 col-lg-2 bg-white border-bottom">
+                                <div class="text-dark text-opacity-50 fw-semibold">100+</div>
+                            </div>
+                        </div>
+                        <div class="row text-center ps-2">
+                            <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
+                                <div>Price</div>
+                            </div>
+                            <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
+                                <div>@Model.Product.Price.ToString("c")</div>
+                            </div>
+                            <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
+                                <div>@Model.Product.Price50.ToString("c")</div>
+                            </div>
+                            <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
+                                <div>@Model.Product.Price100.ToString("c")</div>
+                            </div>
+                        </div>
+                        <div class="row pl-2 mt-3">
+                            <p class="text-secondary lh-sm">@Html.Raw(Model.Product.Description)</p>
+                        </div>
+                        @if (Model.Product.TotalBooktCount<102)
+                        {
+                            <div class="row text-center mb-3">
+                                <div class="col-12 col-md-6 pb-1">
+                                    <span class="text-danger  fw-bold m-4">Only few more left</span>
+                                </div>
+                            </div>
+                        }
+                        else if (Model.Product.TotalBooktCount <=0 )
+                        {
+                            <div class="row text-center mb-3">
+                                <div class="col-12 col-md-6 pb-1">
+                                    <span class="text-danger  fw-bold m-4">Out of Stock</span>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.Product.DiscountAmount != 0 && Model.Product.DiscountAmount != null && Model.Product.DiscountAmount != 1
+                             || Model.Product.category.IsDiscount ==SD.IsValid)
+                        {
+                            <div class="row text-center mb-3">
+                                <div class="col-12 col-md-6 pb-1">
+                                    <h5 class="text-bg-warning  fw-bold ">@Model.Product.DiscountAmount % off</h5>
+                                    <span class="text-bg-primary  fw-bold ">Discount Amount: &#x20b9; @ViewBag.DiscountAmount</span>
+                                </div>
+                            </div>
+                            <div class="row text-center mb-3">
+                                <div class="col-12 col-md-6 pb-1">
+                                   
+                                </div>
+                            </div>
+                        }
+                        <a asp-area="Customer" asp-controller="Home" asp-action="RatingReview" asp-route-productId="@Model.ProductId" class="btn btn-info ms-5 mb-4">Rating & Review </a>
+                        <input asp-for="Count" type="hidden" value="1" />
+                        <div class="row">
+                            <div class="col-12 col-md-6 pb-1">
+                                <button type="submit" 
+                                        class="btn btn-primary bg-gradient  w-100 py-2 text-uppercase fw-semibold">
+                                    Add to Cart 
+                                </button>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

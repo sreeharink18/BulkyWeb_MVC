@@ -1,9 +1,12 @@
 ﻿using BulkyWeb.Models;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BulkyWeb.DataAccess.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -11,12 +14,24 @@ namespace BulkyWeb.DataAccess.Data
         }
         public DbSet<Category> categories { get; set; }
         public DbSet<Product> products { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public  DbSet<Company> companies { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public DbSet<OrderDetail> orderDetails { get; set; }
+        public DbSet<OrderHeader> orderHeader { get; set; }
+		public DbSet<MultipleAddress> MultipleAddresses { get; set; }
+        public DbSet<Coupon> coupons { get; set; }
+        public DbSet<SalesReport> SalesReports { get; set; }
+        public DbSet<RatingReview> RatingReviews { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Category>().HasData(
-                new Category { Id = 1, Name = "Action", DisplayOrder = 1 },
-                new Category { Id = 2, Name = "SciFi", DisplayOrder = 2 },
-                new Category { Id = 3, Name = "History", DisplayOrder = 3 }
+                new Category { Id = 1, Name = "Action", DisplayOrder = 1,List=false,CountCategory=1, IsDiscount = "null", DiscountAmount = 0 },
+                new Category { Id = 2, Name = "SciFi", DisplayOrder = 2, List = false, CountCategory = 2, IsDiscount = "null", DiscountAmount = 0 },
+                new Category { Id = 3, Name = "History", DisplayOrder = 3, List = false, CountCategory = 3 ,IsDiscount ="null" , DiscountAmount=20}
                 );
             modelBuilder.Entity<Product>().HasData(
             new Product
@@ -31,7 +46,8 @@ namespace BulkyWeb.DataAccess.Data
                 Price50 = 85,
                 Price100 = 80,
                 CategoryId = 1,
-                ImageUrl =""
+                ImageUrl ="",
+                
             },
                 new Product
                 {
@@ -104,6 +120,17 @@ namespace BulkyWeb.DataAccess.Data
                     ImageUrl = ""
                 }
             );
+            modelBuilder.Entity<Company>().HasData(
+               new Company { Id = 1, 
+                   Name = "Brototype",
+                   StreetAddress="Maradu" ,
+                   City="Kochi" ,
+                   State="Kerala" ,
+                   PostalCode ="680876",
+                   PhoneNumber ="9246789033"
+               }
+               
+               );
         }
     }
 }

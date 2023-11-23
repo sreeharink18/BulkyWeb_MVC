@@ -15,6 +15,9 @@ namespace BulkyWeb.Models
         [DisplayName("Display Order")]
         [Range(0, 100, ErrorMessage = " Display Order must between 1-100")]
         public int DisplayOrder { get; set; }
+        public int CountCategory { get; set; }
         public bool List { get; set; }
+        public string IsDiscount { get; set; }
+        public int DiscountAmount { get; set; }
     } 
 }

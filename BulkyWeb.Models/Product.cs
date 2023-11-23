@@ -48,5 +48,11 @@ namespace BulkyWeb.Models
         public bool DisplayList { get; set; }
         [ValidateNever]
         public string ImageUrl { get; set; }
+
+        public int? TotalBooktCount { get; set; }
+        public string? IsDiscountProduct {get; set; }
+
+        [Range(1, 100, ErrorMessage = "The value must be between 1 and 100.")]
+        public int? DiscountAmount { get; set; }
     }
 }

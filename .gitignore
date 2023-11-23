@@ -361,3 +361,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/BulkyWeb.DataAccess/Migrations/20231018051904_CountCategoryoDb.cs

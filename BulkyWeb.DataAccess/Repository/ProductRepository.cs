@@ -33,10 +33,15 @@ namespace BulkyWeb.DataAccess.Repository
                 productfromdb.Price50 = obj.Price50;
                 productfromdb.Author = obj.Author;
                 productfromdb.CategoryId = obj.CategoryId;
+                productfromdb.TotalBooktCount =obj.TotalBooktCount;
                 if(obj.ImageUrl != null)
                 {
                     productfromdb.ImageUrl = obj.ImageUrl;
                 }
+                
+                    productfromdb.IsDiscountProduct = obj.IsDiscountProduct;
+                    productfromdb.DiscountAmount = obj.DiscountAmount;
+                
             }
         }
     }

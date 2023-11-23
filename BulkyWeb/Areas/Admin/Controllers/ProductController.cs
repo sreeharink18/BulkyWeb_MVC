@@ -2,6 +2,8 @@
 using BulkyWeb.DataAccess.Repository.IRepository;
 using BulkyWeb.Models;
 using BulkyWeb.Models.ViewModel;
+using BulkyWeb.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -9,6 +11,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 namespace BulkyWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles =SD.Role_Admin)]
     public class ProductController : Controller
     {
         public readonly IUnitOfWork _unitOfWork;
@@ -90,6 +93,15 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 }
                 else
                 {
+                    if (productVm.Product.DiscountAmount != 0 && productVm.Product.DiscountAmount != null && productVm.Product.DiscountAmount != 1)
+                    {
+                        productVm.Product.IsDiscountProduct = "valid";
+
+                    }
+                    else
+                    {
+                        productVm.Product.IsDiscountProduct = "Invalid";
+                    }
                     _unitOfWork.Product.Update(productVm.Product);
                     TempData["success"] = "Product Updated Successfully";
                 }
